@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理系统</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/system_index.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+    <script type="text/javascript">
+        $(function () {
+            url = window.location.pathname;
+            url = url.substring(8,url.length-1);
+            var $li = $(".left-meu ul li");
+            if (url === 'system_min'){
+                $($li[0]).addClass('active').siblings().removeClass('active')
+            }if(url === 'fplayer'){
+                $($li[1]).addClass('active').siblings().removeClass('active')
+            }if(url === 'add_player'){
+                $($li[2]).addClass('active').siblings().removeClass('active')
+            }if (url === 'showall'){
+                $($li[3]).addClass('active').siblings().removeClass('active')
+            }
+        })
+    </script>
+</head>
+<body>
+    <div class="left">
+        <div class="left-head">
+            <img src="{% static 'images/userLoginbg.jpg' %}" alt="">
+        </div>
+        <div class="left-meu">
+            <ul>
+                <li class="active"><a href="/player/system_min/"><span class="glyphicon glyphicon-home"></span> 球队首页</a></li>
+                <li><a href="/player/fplayer/"><span class="glyphicon glyphicon-search"></span> 人员录入</a></li>
+                <li><a href="/player/add_player/"><span class="glyphicon glyphicon-th-large"></span> 招募球员</a></li>
+                <li><a href="/player/showall/"><span class="glyphicon glyphicon-star-empty"></span> 我的团队</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-th"></span> 战术管理</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-exclamation-sign"></span> 数据中心</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-magnet"></span> 命令中心</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-folder-close"></span> 财务管理</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-cog"></span> 系统设置</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="head">
+        <ul>
+            <li><a href="#">消息<span style="color: red">(1)</span></a></li>
+            <li><a href="#">个人信息</a></li>
+            <li><a href="#">欢迎您:<span>{{date.name}}老板</span></a></li>
+            <li><a href="/player/logout/">退出登录</a></li>
+        </ul>
+    </div>
+</body>
+</html>

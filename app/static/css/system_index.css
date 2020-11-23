@@ -1,0 +1,80 @@
+@charset "utf-8";
+*{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+    font-family: '楷体';
+}
+/*这里是左边的样式*/
+.left{
+    width: 7%;
+    height: 100vh;
+    background-color: #3073a1;
+    float: left;
+}
+.left-head{
+    height: 7vh;
+    width: 100%;
+    background-color: burlywood;
+}
+.left-head img{
+    height: 7vh;
+    width: 100%;
+}
+.left-meu{
+
+}
+.left-meu ul{
+    margin: 0;
+    padding: 0;
+    height: 93vh;
+    width: 100%;
+}
+.left-meu ul li{
+    display: block;
+    height: 7vh;
+    width: 100%;
+    float: left;
+}
+.left-meu ul li a{
+    display: block;
+    color: cornsilk;
+    text-align: center;
+    line-height: 7vh;
+    text-decoration: none;
+}
+.left-meu ul li a:hover{
+    background-color: #1f4c57;
+    text-decoration: none;
+}
+.active{
+    background-color: #1f4c57;
+    text-decoration: none;
+}
+/*这里是头部*/
+.head{
+    width: 93%;
+    height: 7vh;
+    background-color: #3073a1;
+    float: left;
+}
+.head ul{
+    height: 100%;
+    width: 40%;
+    float: right;
+    /*margin-right: 10%;*/
+}
+.head ul li{
+    display: block;
+    height: 100%;
+    width: 25%;
+    float: left;
+}
+.head ul li a{
+    text-decoration: none;
+    text-align: center;
+    display: block;
+    line-height: 7vh;
+    color: cornsilk;
+}

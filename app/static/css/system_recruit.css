@@ -1,0 +1,239 @@
+@charset "utf-8";
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+    font-family: '楷体';
+}
+
+.body {
+    float: left;
+    height: 93vh;
+    width: 93%;
+    background-image: url("../images/gblogin2.jpg");
+}
+
+.body .a_head ul {
+    display: block;
+    height: 7vh;
+    width: 100%;
+    border-bottom: 1px #afafaf solid;
+    padding-left: 5%;
+}
+
+.body .a_head ul li {
+    font-size: 18px;
+    display: block;
+    float: left;
+    height: 5vh;
+    margin-top: 2vh;
+    width: 100px;
+    line-height: initial;
+    padding-top: 10px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+}
+
+.a_active {
+    border-left: 1px #afafaf solid;
+    border-top: 1px #afafaf solid;
+    border-right: 1px #afafaf solid;
+    background-color: #cbcbcb;
+    border-radius: 5px 5px 0 0;
+}
+
+.a_context div {
+    height: 80vh;
+    width: 90%;
+    margin: 15px auto;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    display: none;
+    position: relative;
+}
+
+.a_context .a_act {
+    display: block;
+}
+
+.a_context .all form {
+    display: block;
+    height: 50px;
+    width: 100%;
+}
+
+.a_context .all form label {
+    display: block;
+    padding: 10px;
+}
+
+.a_context .all form label input {
+    outline: none;
+    width: 200px;
+    border: 1px silver solid;
+    height: 30px;
+    padding-left: 10px;
+    display: block;
+    float: left;
+}
+
+.a_context .all form label span {
+    display: block;
+    height: 30px;
+    width: 30px;
+    float: left;
+    text-align: center;
+    background-color: cornflowerblue;
+    line-height: 30px;
+    margin-top: -1px;
+    cursor: pointer;
+}
+
+.a_context .all form label button {
+    display: block;
+    height: 30px;
+    width: 40px;
+    float: left;
+    margin-left: 10px;
+}
+
+.a_context .all hr {
+    margin: 10px;
+}
+
+.a_context .all ul {
+    display: block;
+    height: 40px;
+    width: 100%;
+    line-height: 40px;
+}
+
+.a_context .all ul li {
+    display: block;
+    height: 30px;
+    width: 20%;
+    float: left;
+    font-size: 18px;
+}
+
+.a_context .all ul li select {
+    height: 30px;
+    width: 60%;
+    outline: none;
+    border-radius: 5px;
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.a_context .all table {
+    width: 100%;
+}
+
+.a_context .all table tr {
+    height: 40px;
+    width: 100%;
+}
+
+.a_context .all table tr th {
+    text-align: center;
+    width: 11%;
+}
+
+.a_context .all table tr td {
+    text-align: center;
+}
+
+.a_context .all table tr td a {
+    cursor: pointer;
+}
+
+.a_context .all table tr td img {
+    height: 30px;
+    width: 30px;
+    border-radius: 30px;
+}
+
+.a_context .all p {
+    position: absolute;
+    right: 40px;
+    bottom: 0;
+}
+
+.a_context .all p button {
+    margin-left: 20px;
+}
+
+#sx_context tr th {
+    width: 8%;
+}
+
+.sx_data {
+    padding: 20px;
+    height: 430px;
+}
+
+.sx_data form label {
+    display: block;
+    height: 40px;
+    width: 300px;
+    float: left;
+}
+
+.sx_data form label input {
+    outline: none;
+}
+
+.sx_data form label span {
+    display: block;
+    width: 300px;
+    font-size: 10px;
+    color: red;
+    visibility: hidden;
+}
+
+.qy_div label {
+    height: 40px;
+    width: 300px;
+    display: block;
+    float: left;
+}
+
+.qy_div label input[type='number'], .qy_div label select {
+    height: 20px;
+    width: 170px;
+}
+.qy_div label span{
+    padding-left: 20px;
+    color: red;
+    display: block;
+    font-size: 12px;
+    height: 20px;
+    width: 300px;
+    float: left;
+    visibility: hidden;
+}
+.player_chance {
+    padding-left: 50px;
+    display: flex;
+    height: 30px;
+    width: 600px;
+    visibility: hidden;
+}
+
+.player_chance input {
+    text-align: center;
+    width: 50px;
+    height: 20px;
+    display: flex;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}

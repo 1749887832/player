@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>篮球球队管理系统</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/system_min.css' %}">
+    <script src="{% static 'js/jQuery-3.5.1-min.js' %}"></script>
+</head>
+<body>
+    {% include 'system_index.html' %}
+    <div class="body">
+       <div class="left-context">
+           <h1>球队简介:</h1>
+           <hr>
+            <div class="h_img">
+                <img src="{% static team_date.team_pic %}" alt="">
+                <span>{{ team_date.name }}</span>
+            </div>
+           <p style="margin-top: 30px">建队时间:<span>{{ team_date.date|date:"Y年m月d日" }}</span></p>
+           <p>球队教练:<span>{{ team_date.head_cocah }}</span></p>
+           <p>地理位置:<span>{{ team_date.position }}</span></p>
+           <p>主场球馆:<span>{{ team_date.aarea }}</span></p>
+       </div>
+        <div class="right-top">
+            <h2>球队战绩:</h2>
+            <hr>
+            <ul>
+                <li>NO:1</li>
+                <li>胜:56</li>
+                <li>负:12</li>
+                <li>胜率:78.22%</li>
+            </ul>
+        </div>
+        <div class="right-bottom">
+            <h2>今日赛程:</h2>
+            <hr>
+            {% for i in team_one %}
+                <ul>
+                    <li class="one">
+                        <span>{{ i.time|date:'H:d' }}</span>
+                        <span>{{ i.type }}</span>
+                    </li>
+                    <li class="pic" style="text-align: left">
+                        <span><img src="{% static i.team_one.team_pic %}" alt="">{{ i.team_one.name }}</span>
+                        <span><img src="{% static i.team_two.team_pic %}" alt="">{{ i.team_two.name }}</span>
+                    </li>
+                    <li>{{ i.team_one.aarea }}</li>
+                    <li>{{ i.home }}</li>
+                </ul>
+                <hr style="margin-top: -7px;margin-bottom: 7px">
+                {% empty %}
+                <h1>今日暂无比赛</h1>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

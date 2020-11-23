@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/super_login.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.min.js' %}"></script>
+</head>
+<body>
+    <div class="head">
+        <img src="{% static 'images/logo.png' %}" alt="">
+    </div>
+    <div class="meu">
+        <img src="{% static 'images/title2.png' %}" alt="">
+    </div>
+    <div class="context">
+        <div class="zh">
+            <ul>
+                <li class="active">密码登录</li>
+                <li>手机登录</li>
+            </ul>
+        </div>
+        <form action="/player/yzlogin/" method="post">
+            {% csrf_token %}
+            <label for="">
+                <span class="glyphicon glyphicon-user"></span>
+                <input type="text" id="username" name="username">
+            </label>
+            <label for="">
+                <span class="glyphicon glyphicon-lock"></span>
+                <input type="password" id="password" name="password">
+            </label>
+            <button type="submit">登录</button>
+            <p>{{ msg }}</p>
+        </form>
+    </div>
+</body>
+</html>

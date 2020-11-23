@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>招募球员</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/system_recruit.css' %}">
+    <link rel="stylesheet" href="{% static 'css/hsycmsAlert.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
+    <script src="{% static 'js/jQuery-3.5.1-min.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
+    <script src="{% static 'js/hsycmsAlert.js' %}"></script>
+    <script type="text/javascript">
+        function clearNumber(obj) {
+            obj.value = obj.value.replace(/[^\d.]/g, "");
+            obj.value = obj.value.replace(/\.{2,}/g, ".");
+            obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+        }
+
+        /*这是全部球员名单*/
+        var all_context;
+        var num = 0;
+        var page = 0;
+
+        function button() {
+            if (num === 0) {
+                $('#pre').attr('disabled', true);
+            } else {
+                $('#pre').attr('disabled', false);
+            }
+            if (num === page - 1) {
+                $('#next').attr('disabled', true);
+            } else {
+                $('#next').attr('disabled', false)
+            }
+        }
+
+        function go_next() {
+            num = num + 1;
+            button();
+            show_context();
+        }
+
+        function go_pre() {
+            num = num - 1;
+            button();
+            show_context()
+        }
+
+        function show_context() {
+            $('.a').remove();
+            jsonDate = JSON.stringify(all_context);
+            $.each(JSON.parse(jsonDate), function (i, item) {
+                if (0 + 8 * num <= i && i <= 7 + 8 * num) {
+                    var td = "<tr class='a'>"
+                        + "<td><img src=" + "http://127.0.0.1:8000/static/" + item.userpic + "></td>" +
+                        "<td>" + item.name + "</td>" +
+                        "<td>" + item.sex + "</td>" +
+                        "<td>" + item.age + "</td>" +
+                        "<td>" + item.state + "</td>" +
+                        "<td>" + item.position + "</td>" +
+                        "<td>" + item.palace.split('-')[0] + "</td>" +
+                        "<td>" + item.school.split('-')[item.school.split('-').length - 1] + "</td>" +
+                        "<td><a onclick='add_jx(\"" + item.userid + "\",\"" + item.name + "\")'>加入集训名单</a></td>" +
+                        "</tr>";
+                    $('#context').append(td)
+                }
+            });
+        }
+
+        function tips(txt) {
+            hsycms.tips('tips', txt, function () {
+            }, 2000)
+        }
+
+        function add_jx(userid, name) {
+            hsycms.confirm('confirm', '确认要将' + name + '加入集训名单吗？',
+                function () {
+                    $.ajax({
+                        async: true,
+                        url: '/player/add_to_jx/',
+                        type: 'post',
+                        headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                        data: {
+                            'userid': userid
+                        },
+                        success: function (success) {
+                            tips(success)
+                        },
+                        error: function (error) {
+                            tips(error)
+                        }
+                    })
+                },
+                function (res) {
+                    tips('取消了该操作')
+                },
+            )
+        }
+
+        function getcontext() {
+            var name = document.getElementById('name').value;
+            var age = document.getElementById('age').value;
+            var state = document.getElementById('state').value;
+            var where = document.getElementById('where').value;
+            var sex = document.getElementById('sex').value;
+            $.ajax({
+                async: true,
+                url: '/player/saplayer/',
+                type: 'post',
+                headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                data: {
+                    'name': name,
+                    'age': age,
+                    'state': state,
+                    'where': where,
+                    'sex': sex
+                },
+                success: function (date) {
+                    all_context = date;
+                    sum = JSON.parse(JSON.stringify(all_context)).length;
+                    page = Math.ceil(sum / 8);
+                    $('#sum').text('共' + page + '页');
+                    button();
+                    show_context()
+                },
+                error: function (msg) {
+                    alert('错误')
+                }
+            })
+        }
+
+        /*这里是集训页面*/
+        var jx_context;
+        var jx_num = 0;
+        var jx_page;
+
+        function get_jx_context() {
+            var name = document.getElementById('jx_name').value;
+            var age = document.getElementById('jx_age').value;
+            var state = document.getElementById('jx_state').value;
+            var where = document.getElementById('jx_where').value;
+            var sex = document.getElementById('jx_sex').value;
+            $.ajax({
+                async: true,
+                url: '/player/jxplayer/',
+                type: 'post',
+                headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                data: {
+                    'name': name,
+                    'age': age,
+                    'state': state,
+                    'where': where,
+                    'sex': sex
+                },
+                success: function (date) {
+                    jx_context = date;
+                    jx_sum = JSON.parse(JSON.stringify(jx_context)).length;
+                    jx_page = Math.ceil(jx_sum / 8);
+                    $('#jx_sum').text('共' + jx_page + '页');
+                    jx_button();
+                    jx_show_context()
+                },
+                error: function (msg) {
+                    alert('错误')
+                }
+            })
+        }
+
+        function jx_show_context() {
+            $('.jx').remove();
+            jsonDate = JSON.stringify(jx_context);
+            $.each(JSON.parse(jsonDate), function (i, item) {
+                if (0 + 8 * jx_num <= i && i <= 7 + 8 * jx_num) {
+                    var td = "<tr class='jx'>"
+                        + "<td><img src=" + "http://127.0.0.1:8000/static/" + item.userpic + "></td>" +
+                        "<td>" + item.name + "</td>" +
+                        "<td>" + item.sex + "</td>" +
+                        "<td>" + item.age + "</td>" +
+                        "<td>" + item.state + "</td>" +
+                        "<td>" + item.position + "</td>" +
+                        "<td>" + item.palace.split('-')[0] + "</td>" +
+                        "<td>" + item.school.split('-')[item.school.split('-').length - 1] + "</td>" +
+                        "<td><a onclick='sx_div(\"" + item.userid + "\",\"" + item.name + "\")'>试训</a>&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='remove_jx(\"" + item.userid + "\",\"" + item.name + "\")'>移除</a></td>" +
+                        "</tr>";
+                    $('#jx_context').append(td)
+                }
+            });
+        }
+
+        function sx_div(userid, name) {
+            hsycms.confirm_sx('confirm_sx', '录入球员数据', 'user_name', name,
+                function (res) {
+                    var $input = $('.sx_data input');
+                    var j = 0;
+                    for (var i = 1; i < $input.length; i++) {
+                        if ($input[i].value === '') {
+                            j = j + 1;
+                            $($input[i]).next().css('visibility', 'visible')
+                        }
+                    }
+                    if (j === 0) {
+                        var height = document.getElementById('height').value;
+                        var weight = document.getElementById('weight').value;
+                        var body_fat = document.getElementById('body_fat').value;
+                        var s_reach = document.getElementById('s_reach').value;
+                        var wingspan = document.getElementById('wingspan').value;
+                        var b_press = document.getElementById('b_press').value;
+                        var s_run = document.getElementById('s_run').value;
+                        var b_run = document.getElementById('b_run').value;
+                        var f_basket = document.getElementById('f_basket').value;
+                        var specialty = document.getElementById('specialty').value;
+                        $.ajax({
+                            async: true,
+                            url: '/player/player_sx/',
+                            type: 'post',
+                            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                            data: {
+                                'userid': userid,
+                                'height': height,
+                                'weight': weight,
+                                'body_fat': body_fat,
+                                's_reach': s_reach,
+                                'wingspan': wingspan,
+                                'b_press': b_press,
+                                's_run': s_run,
+                                'b_run': b_run,
+                                'f_basket': f_basket,
+                                'specialty': specialty,
+                            },
+                            success: function (success) {
+                                hsycms.close('confirm_sx');
+                                get_jx_context();
+                                tips(success);
+                            },
+                            error: function (error) {
+                                tips(error)
+                            }
+                        })
+                    }
+                },
+                function (res) {
+                },
+            )
+        }
+
+        function remove_jx(userid, name) {
+            hsycms.confirm('confirm', '确认要将' + name + '移出集训名单吗？',
+                function () {
+                    $.ajax({
+                        async: true,
+                        url: '/player/remove_to_jx/',
+                        type: 'post',
+                        headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                        data: {
+                            'userid': userid
+                        },
+                        success: function (success) {
+                            get_jx_context();
+                            tips(success);
+                        },
+                        error: function (error) {
+                            tips(error)
+                        }
+                    })
+                },
+                function (res) {
+                    tips('取消了该操作')
+                },
+            )
+        }
+
+        function jx_button() {
+            if (jx_num === 0) {
+                $('#jx_pre').attr('disabled', true);
+            } else {
+                $('#jx_pre').attr('disabled', false);
+            }
+            if (jx_num === jx_page - 1) {
+                $('#jx_next').attr('disabled', true);
+            } else {
+                $('#jx_next').attr('disabled', false)
+            }
+        }
+
+        function go_jxnext() {
+            jx_num = jx_num + 1;
+            jx_button();
+            jx_show_context();
+        }
+
+        function go_jxpre() {
+            jx_num = jx_num - 1;
+            jx_button();
+            jx_show_context()
+        }
+
+        /*试训板块*/
+        var sx_context;
+        var sx_num = 0;
+        var sx_page;
+
+        function get_sx_context() {
+            var name = document.getElementById('sx_name').value;
+            var age = document.getElementById('sx_age').value;
+            var state = document.getElementById('sx_state').value;
+            var where = document.getElementById('sx_where').value;
+            var sex = document.getElementById('sx_sex').value;
+            $.ajax({
+                async: true,
+                url: '/player/sxplayer/',
+                type: 'post',
+                headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                data: {
+                    'name': name,
+                    'age': age,
+                    'state': state,
+                    'where': where,
+                    'sex': sex
+                },
+                success: function (date) {
+                    sx_context = date;
+                    sx_sum = JSON.parse(JSON.stringify(sx_context)).length;
+                    sx_page = Math.ceil(sx_sum / 8);
+                    $('#sx_sum').text('共' + sx_page + '页');
+                    sx_button();
+                    sx_show_context()
+                },
+                error: function (msg) {
+                    alert(msg)
+                }
+            })
+        }
+
+        function sx_show_context() {
+            $('.sx').remove();
+            jsonDate = JSON.stringify(sx_context);
+            $.each(JSON.parse(jsonDate), function (i, item) {
+                if (0 + 8 * sx_num <= i && i <= 7 + 8 * sx_num) {
+                    var td = "<tr class='sx'>"
+                        + "<td><img src=" + "http://127.0.0.1:8000/static/" + item.userpic + "></td>" +
+                        "<td>" + item.name + "</td>" +
+                        "<td>" + item.height + "</td>" +
+                        "<td>" + item.weight + "</td>" +
+                        "<td>" + item.body_fat + "</td>" +
+                        "<td>" + item.s_reach + "</td>" +
+                        "<td>" + item.wingspan + "</td>" +
+                        "<td>" + item.b_press + "</td>" +
+                        "<td>" + item.s_run + "</td>" +
+                        "<td>" + item.b_run + "</td>" +
+                        "<td>" + item.f_basket + "</td>" +
+                        "<td><a onclick='qy_div(\"" + item.userid + "\",\"" + item.name + "\")'>签约</a></td>" +
+                        "</tr>";
+                    $('#sx_context').append(td)
+                }
+            });
+        }
+
+        function qy_div(userid, name) {
+            hsycms.confirm_qy('confirm_qy', '球员合同', 'u_name', name,
+                function () {
+                    var hetong = document.getElementById('baoz').value;
+                    var year = document.getElementById('year').value;
+                    var money = document.getElementById('money').value;
+                    var jiaoyi = $('#jiaoyi').is(':checked');
+                    var p_chance = $('#p_chance').is(':checked');
+                    var data = {
+                        'user_id': userid,
+                        'type': hetong,
+                        'year': year,
+                        'money': money,
+                        'jiaoyi': jiaoyi,
+                        'p_chance': p_chance,
+                    };
+                    if (p_chance) {
+                        var p_year = document.getElementById('p_year').value;
+                        data = {
+                            'user_id': userid,
+                            'type': hetong,
+                            'year': year,
+                            'money': money,
+                            'jiaoyi': jiaoyi,
+                            'p_chance': p_chance,
+                            'p_year': p_year
+                        };
+                    }
+                    $.ajax({
+                        async: true,
+                        url: '/player/player_qy/',
+                        type: 'post',
+                        headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                        data: data,
+                        success: function (date) {
+                            hsycms.close('confirm_qy');
+                            get_sx_context();
+                            tips(date)
+                        },
+                        error: function (msg) {
+                            alert(msg)
+                        }
+                    })
+                },
+                function (res) {
+                },
+            )
+        }
+
+        function sx_button() {
+            if (jx_num === 0) {
+                $('#sx_pre').attr('disabled', true);
+            } else {
+                $('#sx_pre').attr('disabled', false);
+            }
+            if (sx_num === sx_page - 1) {
+                $('#sx_next').attr('disabled', true);
+            } else {
+                $('#sx_next').attr('disabled', false)
+            }
+        }
+
+        function go_sxnext() {
+            sx_num = sx_num + 1;
+            sx_button();
+            sx_show_context();
+        }
+
+        function go_sxpre() {
+            sx_num = sx_num - 1;
+            sx_button();
+            sx_show_context()
+        }
+
+        $(document).ready(function () {
+            getcontext();
+            var $li = $('.body .a_head ul li');
+            var $div = $('.body .a_context div');
+            $li.click(function () {
+                $(this).addClass('a_active').siblings().removeClass('a_active');
+                $div.eq($(this).index()).addClass('a_act').siblings().removeClass('a_act');
+                if ($(this).index() === 0) {
+                    getcontext()
+                } else if ($(this).index() === 1) {
+                    get_jx_context()
+                } else {
+                    get_sx_context()
+                }
+                {#getcontext();#}
+            });
+            var $all_get = $('#all_get');
+            $all_get.click(function () {
+                getcontext()
+            });
+            $('#jx_get').click(function () {
+                get_jx_context()
+            });
+            $('#sx_get').click(function () {
+                get_sx_context()
+            });
+            var $select = $('.a_act select');
+            $select.change(function () {
+                getcontext();
+            });
+            $('#jx_ul select').change(function () {
+                get_jx_context();
+            });
+            $('#sx_ul select').change(function () {
+                get_sx_context();
+            });
+            $('#chong').click(function () {
+                document.getElementById('name').value = '';
+                document.getElementById('age').value = '';
+                document.getElementById('state').value = '';
+                document.getElementById('where').value = '';
+                document.getElementById('sex').value = '';
+                getcontext();
+            });
+            $('#jx_chong').click(function () {
+                document.getElementById('jx_name').value = '';
+                document.getElementById('jx_age').value = '';
+                document.getElementById('jx_state').value = '';
+                document.getElementById('jx_where').value = '';
+                document.getElementById('jx_sex').value = '';
+                get_jx_context();
+            });
+            $('#sx_chong').click(function () {
+                document.getElementById('sx_name').value = '';
+                document.getElementById('sx_age').value = '';
+                document.getElementById('sx_state').value = '';
+                document.getElementById('sx_where').value = '';
+                document.getElementById('sx_sex').value = '';
+                get_sx_context();
+            });
+            $('#confirm_sx form input').blur(function () {
+                this.value = Number(this.value).toFixed(2);
+                $(this).next().css('visibility', 'hidden')
+            });
+            $('#p_chance').click(function () {
+                if ($("#p_chance").is(':checked')) {
+                    $('.player_chance').css('visibility', 'visible')
+                } else {
+                    $('.player_chance').css('visibility', 'hidden')
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+{% include 'system_index.html' %}
+<div class="body">
+    <div class="a_head">
+        <ul>
+            <li class="a_active">全部</li>
+            <li>集训中</li>
+            <li>试训中</li>
+        </ul>
+    </div>
+    <div class="a_context">
+        <div class="all a_act">
+            <form action="">
+                <label for="">
+                    <input type="text" placeholder="请输入球员姓名" value="" id="name" name="name">
+                    <span class="glyphicon glyphicon-search" id="all_get"></span>
+                    <button type="reset" id="chong">重置</button>
+                </label>
+            </form>
+            <hr>
+            <ul>
+                <li style="padding-left: 10px"><span>年龄：</span>
+                    <select name="age" id="age">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择年龄</option>
+                        <option value="1">0-20</option>
+                        <option value="2">20-30</option>
+                        <option value="3">30以上</option>
+                    </select>
+                </li>
+                <li><span>性别：</span>
+                    <select name="sex" id="sex">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </li>
+                <li><span>状态：</span>
+                    <select name="state" id="state">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>
+                        <option value="健康">健康</option>
+                        <option value="伤病">伤病</option>
+                    </select>
+                </li>
+                <li><span>位置：</span>
+                    <select name="where" id="where">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择位置</option>
+                        <option value="控球后卫">控球后卫</option>
+                        <option value="得分后卫">得分后卫</option>
+                        <option value="小前锋">小前锋</option>
+                        <option value="大前锋">大前锋</option>
+                        <option value="中锋">中锋</option>
+                    </select>
+                </li>
+            </ul>
+            <table id="context">
+                <tr>
+                    <th>头像</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>状态</th>
+                    <th>位置</th>
+                    <th>家庭住址</th>
+                    <th>毕业学校</th>
+                    <th>操作</th>
+                </tr>
+            </table>
+            <p><span id="sum">1</span>
+                <button onclick="go_pre()" id="pre">上一页</button>
+                <button onclick="go_next()" id="next">下一页</button>
+            </p>
+        </div>
+        <div class="all">
+            <form action="">
+                <label for="">
+                    <input type="text" placeholder="请输入球员姓名" value="" id="jx_name" name="jx_name">
+                    <span class="glyphicon glyphicon-search" id="jx_get"></span>
+                    <button type="reset" id="jx_chong">重置</button>
+                </label>
+            </form>
+            <hr>
+            <ul id="jx_ul">
+                <li style="padding-left: 10px"><span>年龄：</span>
+                    <select name="jx_age" id="jx_age">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择年龄</option>
+                        <option value="1">0-20</option>
+                        <option value="2">20-30</option>
+                        <option value="3">30以上</option>
+                    </select>
+                </li>
+                <li><span>性别：</span>
+                    <select name="jx_sex" id="jx_sex">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </li>
+                <li><span>状态：</span>
+                    <select name="jx_state" id="jx_state">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>
+                        <option value="健康">健康</option>
+                        <option value="伤病">伤病</option>
+                    </select>
+                </li>
+                <li><span>位置：</span>
+                    <select name="jx_where" id="jx_where">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择位置</option>
+                        <option value="控球后卫">控球后卫</option>
+                        <option value="得分后卫">得分后卫</option>
+                        <option value="小前锋">小前锋</option>
+                        <option value="大前锋">大前锋</option>
+                        <option value="中锋">中锋</option>
+                    </select>
+                </li>
+            </ul>
+            <table id="jx_context">
+                <tr>
+                    <th>头像</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>状态</th>
+                    <th>位置</th>
+                    <th>家庭住址</th>
+                    <th>毕业学校</th>
+                    <th>操作</th>
+                </tr>
+            </table>
+            <p><span id="jx_sum">1</span>
+                <button onclick="go_jxpre()" id="jx_pre">上一页</button>
+                <button onclick="go_jxnext()" id="jx_next">下一页</button>
+            </p>
+        </div>
+        <div class="all">
+            <form action="">
+                <label for="">
+                    <input type="text" placeholder="请输入球员姓名" value="" id="sx_name" name="sx_name">
+                    <span class="glyphicon glyphicon-search" id="sx_get"></span>
+                    <button type="reset" id="sx_chong">重置</button>
+                </label>
+            </form>
+            <hr>
+            <ul id="sx_ul">
+                <li style="padding-left: 10px"><span>年龄：</span>
+                    <select name="sx_age" id="sx_age">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择年龄</option>
+                        <option value="1">0-20</option>
+                        <option value="2">20-30</option>
+                        <option value="3">30以上</option>
+                    </select>
+                </li>
+                <li><span>性别：</span>
+                    <select name="sx_sex" id="sx_sex">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </li>
+                <li><span>状态：</span>
+                    <select name="sx_state" id="sx_state">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>
+                        <option value="健康">健康</option>
+                        <option value="伤病">伤病</option>
+                    </select>
+                </li>
+                <li><span>位置：</span>
+                    <select name="sx_where" id="sx_where">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择位置</option>
+                        <option value="控球后卫">控球后卫</option>
+                        <option value="得分后卫">得分后卫</option>
+                        <option value="小前锋">小前锋</option>
+                        <option value="大前锋">大前锋</option>
+                        <option value="中锋">中锋</option>
+                    </select>
+                </li>
+            </ul>
+            <table id="sx_context">
+                <tr>
+                    <th>头像</th>
+                    <th>姓名</th>
+                    <th>身高(cm)</th>
+                    <th>体重(kg)</th>
+                    <th>体脂(%)</th>
+                    <th>摸高(cm)</th>
+                    <th>臂展(cm)</th>
+                    <th>卧推(m)</th>
+                    <th>100米(s)</th>
+                    <th>折返跑(s)</th>
+                    <th>罚篮(%)</th>
+                    <th>操作</th>
+                </tr>
+            </table>
+            <p><span id="sx_sum">1</span>
+                <button onclick="go_jxpre()" id="sx_pre">上一页</button>
+                <button onclick="go_jxnext()" id="sx_next">下一页</button>
+            </p>
+        </div>
+    </div>
+</div>
+<div class="hsycms-model-mask" id="mask-confirm"></div>
+<div class="hsycms-model hsycms-model-confirm" id="confirm">
+    <div class="hscysm-model-title">系统提示</div>
+    <div class="hsycms-model-text">确定要将此球员加入集训名单？</div>
+    <div class="hsycms-model-btn">
+        <button type="button" class="cancel">取消</button>
+        <button type="button" class="ok">确定</button>
+    </div>
+</div>
+<div class="hsycms-model-mask" id="mask-confirm_sx"></div>
+<div class="hsycms-model hsycms-model-confirm_sx" id="confirm_sx">
+    <div class="hscysm-model-title">录入球员数据</div>
+    <div class="sx_data">
+        <h3 style="margin-top: 0;padding: 0 0 20px 0;cursor: pointer">基本信息</h3>
+        <form action="">
+            <label for="">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：
+                <input type="text" disabled="disabled" id="user_name" value="">
+            </label>
+            <label for="">身&nbsp;&nbsp;高&nbsp;&nbsp;(cm)：
+                <input type="text" onkeyup="clearNumber(this)" id="height">
+                <span>*身高不能为空</span>
+            </label>
+            <label for="">体&nbsp;&nbsp;重&nbsp;&nbsp;(kg)：
+                <input type="text" onkeyup="clearNumber(this)" id="weight">
+                <span>*体重不能为空</span>
+            </label>
+            <label for="">体&nbsp;&nbsp;脂&nbsp;&nbsp;&nbsp;(%)：
+                <input type="text" onkeyup="clearNumber(this)" id="body_fat">
+                <span>*体脂不能为空</span>
+            </label>
+            <label for="">站立摸高(cm)：
+                <input type="text" onkeyup="clearNumber(this)" id="s_reach">
+                <span>*站立摸高不能为空</span>
+            </label>
+            <label for="">臂&nbsp;&nbsp;展&nbsp;&nbsp;(cm)：
+                <input type="text" onkeyup="clearNumber(this)" id="wingspan">
+                <span>*臂展不能为空</span>
+            </label>
+            <label for="">卧&nbsp;&nbsp;推&nbsp;&nbsp;(cm)：
+                <input type="text" onkeyup="clearNumber(this)" id="b_press">
+                <span>*卧推不能为空</span>
+            </label>
+            <label for="">冲&nbsp;刺&nbsp;跑&nbsp;(s)：
+                <input type="text" onkeyup="clearNumber(this)" id="s_run">
+                <span>*冲刺跑不能为空</span>
+            </label>
+            <label for="">折&nbsp;返&nbsp;跑&nbsp;(s)：
+                <input type="text" onkeyup="clearNumber(this)" id="b_run">
+                <span>*折返跑不能为空</span>
+            </label>
+            <label for="">罚&nbsp;&nbsp;篮&nbsp;&nbsp;&nbsp;(%)：
+                <input type="text" onkeyup="clearNumber(this)" id="f_basket">
+                <span>*罚篮不能为空</span>
+            </label>
+            <div style="display: block;height: 70px;width: 600px;float:left;margin-top: 20px">技术特点：
+                <textarea name="" id="specialty" cols="76" rows="2" style="resize: none;padding-left: 10px"></textarea>
+            </div>
+        </form>
+    </div>
+    <div class="hsycms-model-btn">
+        <button type="button" class="cancel">取消</button>
+        <button type="button" class="ok">确定</button>
+    </div>
+</div>
+<div class="hsycms-model-mask" id="mask-confirm_qy"></div>
+<div class="hsycms-model hsycms-model-confirm_qy" id="confirm_qy">
+    <div class="hscysm-model-title">球员合同</div>
+    <div class="qy_div">
+        <p>甲方:<span id="boss_name">{{ date.name }}</span></p>
+        <p>乙方:<span id="u_name"></span></p>
+        <label for="">合同类型:
+            <select name="baoz" id="baoz">
+                <option value="true">保障合同</option>
+                <option value="false">非障合同</option>
+            </select>
+        </label>
+        <label for="">年&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;限:
+            <input type="number" id="year"
+                   onblur="if(value>10){value=10}if (value<=0){value=1}else{value=Math.floor(value)}" value="1">（年）
+            <span>*请输入年限</span>
+        </label>
+        <label for="">薪&nbsp;&nbsp;&nbsp;&nbsp;资:
+            <input type="number" id="money" onblur="if(value<100000){value=100000}else{value=Math.round(value*100)/100}"
+                   value="100000">（元）
+            <span>*请输入薪资</span>
+        </label>
+        <label for="">交易否决权:
+            <input type="checkbox" id="jiaoyi">
+        </label>
+        <label for="">球员选项:
+            <input type="checkbox" id="p_chance">
+        </label>
+        <div class="player_chance">第
+            <input type="number" id="p_year"
+                   onblur="if(value>10){value=10}if (value<=0){value=1}else{value=Math.round(value*100)/100}" value="1">年为球员选项
+        </div>
+    </div>
+    <div class="hsycms-model-btn">
+        <button type="button" class="cancel">取消</button>
+        <button type="button" class="ok">确定</button>
+    </div>
+</div>
+<div class="hsycms-model-mask" id="mask-tips"></div>
+<div class="hsycms-model hsycms-model-tips" id="tips">
+    <div class="hsycms-model-text">这里是提示内容</div>
+</div>
+</body>
+</html>
