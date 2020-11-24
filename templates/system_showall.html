@@ -42,7 +42,6 @@
         var all_context;
         var num = 0;
         var page = 0;
-
         function button() {
             if (num === 0) {
                 $('#pre').attr('disabled', true);
@@ -60,7 +59,6 @@
             button();
             show_all();
         }
-
         function go_pre() {
             num = num - 1;
             button();
@@ -85,13 +83,95 @@
                 }
             });
         }
+        var p_context;
+        var p_num = 0;
+        var p_page = 0;
+        function getPlayer() {
+            var p_name = document.getElementById('p_name').value;
+            var p_age = document.getElementById('p_age').value;
+            var p_state = document.getElementById('p_state').value;
+            var p_position = document.getElementById('p_position').value;
+            var p_sex = document.getElementById('p_sex').value;
+            $.ajax({
+                async: true,
+                url: '/player/show_player/',
+                type: 'post',
+                headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                data: {
+                    'p_name': p_name,
+                    'p_age': p_age,
+                    'p_position': p_position,
+                    'p_state':p_state,
+                    'p_sex': p_sex
+                },
+                success: function (date) {
+                    {#console.log(date)#}
+                    p_context = date;
+                    sum = JSON.parse(JSON.stringify(p_context)).length;
+                    p_page = Math.ceil(sum / 8);
+                    $('#p_sum').text('共' + p_page + '页');
+                    p_button();
+                    show_player()
+                },
+                error: function (msg) {
+                    alert('错误')
+                }
+            })
+        }
+        function show_player() {
+            $('.a').remove();
+            jsonDate = JSON.stringify(p_context);
+            $.each(JSON.parse(jsonDate), function (i, item) {
+                if (0 + 8 * p_num <= i && i <= 7 + 8 * p_num) {
+                    var td = "<tr class='a'>"
+                        + "<td><img src=" + "http://127.0.0.1:8000/static/" + item.userpic + "></td>" +
+                        "<td>" + item.name + "</td>" +
+                        "<td>" + item.sex + "</td>" +
+                        "<td>" + item.age + "</td>" +
+                        "<td>" + item.position + "</td>" +
+                        "<td>" + item.state + "</td>" +
+                        "<td>" + item.palace.split('-')[0] + "</td>" +
+                        "<td>" + item.school.split('-')[item.school.split('-').length - 1] + "</td>" +
+                        "<td><a onclick='add_jx(\"" + item.userid + "\",\"" + item.name + "\")'>解约</a></td>" +
+                        "</tr>";
+                    $('#p_context').append(td)
+                }
+            });
+        }
+        function p_button() {
+            if (p_num === 0) {
+                $('#p_pre').attr('disabled', true);
+            } else {
+                $('#p_pre').attr('disabled', false);
+            }
+            if (p_num === p_page - 1) {
+                $('#p_next').attr('disabled', true);
+            } else {
+                $('#p_next').attr('disabled', false)
+            }
+        }
+        function go_p_pre() {
+            num = num + 1;
+            p_button();
+            show_player();
+        }
+        function go_p_next() {
+            num = num - 1;
+            p_button();
+            show_player()
+        }
         $(document).ready(function () {
             getAll();
             var $li = $('.body .f_head ul li');
             var $div = $('.body .f_context div');
             $li.click(function () {
                 $(this).addClass('a_active').siblings().removeClass('a_active');
-                $div.eq($(this).index()).addClass('sh').siblings().removeClass('sh')
+                $div.eq($(this).index()).addClass('sh').siblings().removeClass('sh');
+                if ($(this).index() === 0) {
+                    getAll()
+                } else{
+                    getPlayer()
+                }
             });
             var $all_get = $('#all_get');
             $all_get.click(function () {
@@ -105,9 +185,21 @@
                 document.getElementById('sex').value = '';
                 getAll();
             });
-            var $select = $('.sh select');
-            $select.change(function () {
+            $('#p_chong').click(function () {
+                document.getElementById('p_name').value = '';
+                document.getElementById('p_age').value = '';
+                document.getElementById('p_state').value = '';
+                document.getElementById('p_position').value = '';
+                document.getElementById('p_sex').value = '';
+                getPlayer();
+            });
+            var all = $('.all select');
+            all.change(function () {
                 getAll();
+            });
+            var player = $('.player select');
+            player.change(function () {
+                getPlayer();
             });
         })
     </script>
@@ -122,8 +214,8 @@
         </ul>
     </div>
     <div class="f_context">
-        <div class="sh">
-             <form action="">
+        <div class="all sh">
+            <form action="">
                 <label for="">
                     <input type="text" placeholder="请输入球员姓名" value="" id="name" name="name">
                     <span class="glyphicon glyphicon-search" id="all_get"></span>
@@ -146,13 +238,13 @@
                         <option value="女">女</option>
                     </select>
                 </li>
-{#                <li><span>状态：</span>#}
-{#                    <select name="state" id="state">#}
-{#                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>#}
-{#                        <option value="健康">健康</option>#}
-{#                        <option value="伤病">伤病</option>#}
-{#                    </select>#}
-{#                </li>#}
+                {#                <li><span>状态：</span>#}
+                {#                    <select name="state" id="state">#}
+                {#                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>#}
+                {#                        <option value="健康">健康</option>#}
+                {#                        <option value="伤病">伤病</option>#}
+                {#                    </select>#}
+                {#                </li>#}
                 <li><span>角色：</span>
                     <select name="role" id="role">
                         <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择角色</option>
@@ -164,7 +256,7 @@
                     </select>
                 </li>
             </ul>
-             <table id="context">
+            <table id="context">
                 <tr>
                     <th>头像</th>
                     <th>姓名</th>
@@ -181,7 +273,66 @@
                 <button onclick="go_next()" id="next">下一页</button>
             </p>
         </div>
-        <div>2222222222</div>
+        <div class="player">
+            <form action="">
+                <label for="">
+                    <input type="text" placeholder="请输入球员姓名" value="" id="p_name" name="p_name">
+                    <span class="glyphicon glyphicon-search" id="all_get"></span>
+                    <button type="reset" id="p_chong">重置</button>
+                </label>
+            </form>
+            <ul>
+                <li style="padding-left: 10px"><span>年龄：</span>
+                    <select name="p_age" id="p_age">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择年龄</option>
+                        <option value="1">0-20</option>
+                        <option value="2">20-30</option>
+                        <option value="3">30以上</option>
+                    </select>
+                </li>
+                <li><span>性别：</span>
+                    <select name="p_sex" id="p_sex">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择性别</option>
+                        <option value="男">男</option>
+                        <option value="女">女</option>
+                    </select>
+                </li>
+                <li><span>状态：</span>
+                    <select name="p_state" id="p_state">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>
+                        <option value="健康">健康</option>
+                        <option value="伤病">伤病</option>
+                    </select>
+                </li>
+                <li><span>角色：</span>
+                    <select name="p_position" id="p_position">
+                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择位置</option>
+                        <option value="控球后卫">控球后卫</option>
+                        <option value="得分后卫">得分后卫</option>
+                        <option value="小前锋">小前锋</option>
+                        <option value="大前锋">大前锋</option>
+                        <option value="中锋">中锋</option>
+                    </select>
+                </li>
+            </ul>
+            <table id="p_context">
+                <tr>
+                    <th>头像</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>位置</th>
+                    <th>状态</th>
+                    <th>家庭住址</th>
+                    <th>毕业学校</th>
+                    <th>操作</th>
+                </tr>
+            </table>
+            <p><span id="p_sum">1</span>
+                <button onclick="go_p_pre()" id="p_pre">上一页</button>
+                <button onclick="go_p_next()" id="p_next">下一页</button>
+            </p>
+        </div>
     </div>
 </div>
 </body>

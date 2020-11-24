@@ -57,5 +57,6 @@ urlpatterns = [
     path('player/showall/', Show.ShowTeam.showAll),
     # 查询该队所有的人
     path('player/show_all/', Show.ShowTeam.showAllrole),
-
+    # 查询该对的球员
+    path('player/show_player/', Show.ShowTeam.showAllPlayer),
 ]
