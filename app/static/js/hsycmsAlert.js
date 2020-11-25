@@ -50,9 +50,13 @@ var hsycms = function () {
             $("#" + id).find(".hsycms-model-btn button").click(function () {
                 hsycms.close(id);
                 if ($(this).attr("class") == "ok") {
-                    confirm();
+                    $("#"+id).off('click').click(function (){
+                        confirm();
+                    })
                 } else {
-                    concel();
+                    $("#"+id).off('click').click(function (){
+                        concel();
+                    })
                 }
             })
         },
@@ -61,10 +65,14 @@ var hsycms = function () {
             $("#" + user_name).attr("value", name);
             $("#" + id).find(".hsycms-model-btn button").click(function () {
                 if ($(this).attr("class") == "ok") {
-                    confirm_sx();
+                    $("#"+id).off('click').click(function (){
+                        confirm_sx();
+                    })
                 } else {
                     hsycms.close(id);
-                    concel();
+                    $("#"+id).off('click').click(function (){
+                        concel();
+                    })
                 }
             })
         },
@@ -73,10 +81,14 @@ var hsycms = function () {
             $("#" + user_name).text(name);
             $("#" + id).find(".hsycms-model-btn button").click(function () {
                 if ($(this).attr("class") == "ok") {
-                    confirm_qy();
+                    $("#"+id).off('click').click(function (){
+                        confirm_qy();
+                    })
                 } else {
                     hsycms.close(id);
-                    concel();
+                    $("#"+id).off('click').click(function (){
+                        concel();
+                    })
                 }
             })
         },
