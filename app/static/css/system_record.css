@@ -12,3 +12,30 @@
     width: 93%;
     background-image: url("../images/gblogin2.jpg");
 }
+.body .r_head ul{
+    display: block;
+    height: 7vh;
+    width: 100%;
+    border-bottom: 1px #a6a6a6 solid;
+    padding-left: 5%;
+}
+.body .r_head ul li{
+    font-size: 18px;
+    display: block;
+    float: left;
+    height: 5vh;
+    margin-top: 2vh;
+    width: 100px;
+    line-height: initial;
+    padding-top:10px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+}
+.a_active{
+    border-left: 1px #a6a6a6 solid;
+    border-top: 1px #a6a6a6 solid;
+    border-right: 1px #a6a6a6 solid;
+    background-color: #cbcbcb;
+    border-radius: 5px 5px 0 0;
+}
