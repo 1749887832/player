@@ -10,6 +10,7 @@
         $(function () {
             url = window.location.pathname;
             url = url.substring(8,url.length-1);
+            {#console.log(url)#}
             var $li = $(".left-meu ul li");
             if (url === 'system_min'){
                 $($li[0]).addClass('active').siblings().removeClass('active')
@@ -17,8 +18,10 @@
                 $($li[1]).addClass('active').siblings().removeClass('active')
             }if(url === 'add_player'){
                 $($li[2]).addClass('active').siblings().removeClass('active')
-            }if (url === 'showall'){
+            }if(url === 'showall'){
                 $($li[3]).addClass('active').siblings().removeClass('active')
+            }if(url === 'record'){
+                $($li[5]).addClass('active').siblings().removeClass('active')
             }
         })
     </script>
@@ -35,7 +38,7 @@
                 <li><a href="/player/add_player/"><span class="glyphicon glyphicon-th-large"></span> 招募球员</a></li>
                 <li><a href="/player/showall/"><span class="glyphicon glyphicon-star-empty"></span> 我的团队</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-th"></span> 战术管理</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-exclamation-sign"></span> 数据中心</a></li>
+                <li><a href="/player/record/"><span class="glyphicon glyphicon-exclamation-sign"></span> 数据中心</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-magnet"></span> 命令中心</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-folder-close"></span> 财务管理</a></li>
                 <li><a href="#"><span class="glyphicon glyphicon-cog"></span> 系统设置</a></li>

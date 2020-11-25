@@ -20,6 +20,7 @@ import app.admin.admin_login as Log
 import app.admin.admin_find as Fin
 import app.admin.admin_addplayer as Add
 import app.admin.admin_showall as Show
+import app.admin.admin_record as Re
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -57,6 +58,9 @@ urlpatterns = [
     path('player/showall/', Show.ShowTeam.showAll),
     # 查询该队所有的人
     path('player/show_all/', Show.ShowTeam.showAllrole),
-    # 查询该对的球员
+    # 查询该队的球员
     path('player/show_player/', Show.ShowTeam.showAllPlayer),
+
+    # 球员数据接口
+    path('player/record/', Re.Record.Show_all)
 ]
