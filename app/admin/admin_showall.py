@@ -97,7 +97,7 @@ class ShowTeam:
                         context['palace'] = i.palace
                         context['school'] = i.school
                         date.append(context)
-            print(date)
+            # print(date)
         except Exception:
             return HttpResponse('错误')
         return JsonResponse(date, safe=False)
