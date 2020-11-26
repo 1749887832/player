@@ -21,7 +21,7 @@ import app.admin.admin_find as Fin
 import app.admin.admin_addplayer as Add
 import app.admin.admin_showall as Show
 import app.admin.admin_record as Re
-
+import app.admin.admin_tactics as Ta
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 经理登录页面
@@ -60,7 +60,10 @@ urlpatterns = [
     path('player/show_all/', Show.ShowTeam.showAllrole),
     # 查询该队的球员
     path('player/show_player/', Show.ShowTeam.showAllPlayer),
-
+    # 战术管理接口
+    path('player/tactics/',Ta.Tactics.Show_all),
+    # 测试返回接口
+    path('player/data/',Ta.Tactics.Data),
     # 球员数据接口
     path('player/record/', Re.Record.Show_all)
 ]

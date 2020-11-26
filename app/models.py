@@ -135,3 +135,25 @@ class SignUp(models.Model):
     create_time = models.DateTimeField(null=True)
     # 球员id
     user_id = models.IntegerField(null=False)
+
+
+class Tactics(models.Model):
+    id = models.AutoField(primary_key=True)
+    # 战术名称
+    title = models.CharField(max_length=32, null=False)
+    # 发起者
+    start_player = models.CharField(max_length=64, null=False)
+    # 终结者
+    end_player = models.CharField(max_length=64, null=False)
+    # 主导者
+    main_player = models.CharField(max_length=64, null=False)
+    # 战术详情
+    context = models.CharField(max_length=128, null=False)
+    # 战术图片或视频
+    file = models.CharField(max_length=64, null=False)
+    # 创建时间
+    create_time = models.DateTimeField(null=True)
+    # 创建人
+    create_user = models.CharField(max_length=32, null=False)
+    # 修改人
+    update_uer = models.CharField(max_length=32, null=False)
