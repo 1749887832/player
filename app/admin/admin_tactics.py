@@ -81,3 +81,9 @@ class Tactics:
             {"id": 10029, "username": "user-29", "sex": "男", "city": "城市-29", "sign": "签名-29", "experience": 647,
              "logins": 107, "wealth": 97450636, "classify": "酱油", "score": 27}]}
         return JsonResponse(data, safe=False)
+
+    def Create_tatics(self):
+        user = UserProfile.objects.get(user_id=self.user.id)
+        context = dict()
+        context['date'] = user
+        return render(self, 'system_createtactics.html', context)

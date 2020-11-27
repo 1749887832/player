@@ -1,0 +1,15 @@
+@charset "utf-8";
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+    font-family: '楷体';
+}
+.body {
+    float: left;
+    height: 93vh;
+    width: 93%;
+    overflow: auto;
+    background-image: url("../images/gblogin2.jpg");
+}

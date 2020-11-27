@@ -64,6 +64,8 @@ urlpatterns = [
     path('player/tactics/',Ta.Tactics.Show_all),
     # 测试返回接口
     path('player/data/',Ta.Tactics.Data),
+    # 新建战术页面跳转
+    path('player/create_tactics/',Ta.Tactics.Create_tatics),
     # 球员数据接口
     path('player/record/', Re.Record.Show_all)
 ]
