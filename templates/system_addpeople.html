@@ -13,10 +13,11 @@
     <script src="{% static 'js/jQuery-3.5.1-min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/jquery.cookie.js' %}"></script>
     <script type="text/javascript">
-           function tips(txt){
-                hsycms.tips('tips',txt,function(){
-             },2000)
-           }
+        function tips(txt) {
+            hsycms.tips('tips', txt, function () {
+            }, 2000)
+        }
+
         $(document).ready(function () {
             var $li = $('.body .f_head ul li');
             var $div = $('.body .f_context div');
@@ -27,36 +28,36 @@
             var $input = $('input');
             $input.focus(function () {
                 var value = $(this).val();
-                if (value===''){
-                    $(this).next().css('visibility','visible');
-                }else{
-                    $(this).next().css('visibility','hidden')
+                if (value === '') {
+                    $(this).next().css('visibility', 'visible');
+                } else {
+                    $(this).next().css('visibility', 'hidden')
                 }
             });
             $input.blur(function () {
                 var value = $(this).val();
-                if(value ===''){
-                    $(this).next().css('visibility','visible')
-                }else{
-                    $(this).next().css('visibility','hidden')
+                if (value === '') {
+                    $(this).next().css('visibility', 'visible')
+                } else {
+                    $(this).next().css('visibility', 'hidden')
                 }
             });
             var pattern = /^1[34578]\d{9}$/;
             var $phone = $('.phone');
             $phone.focus(function () {
                 var value = $(this).val();
-                if(pattern.test(value)){
-                    $(this).next().css('visibility','hidden')
-                }else {
-                    $(this).next().css('visibility','visible')
+                if (pattern.test(value)) {
+                    $(this).next().css('visibility', 'hidden')
+                } else {
+                    $(this).next().css('visibility', 'visible')
                 }
             });
             $phone.blur(function () {
                 var value = $(this).val();
-                if(pattern.test(value)){
-                    $(this).next().css('visibility','hidden')
-                }else {
-                    $(this).next().css('visibility','visible')
+                if (pattern.test(value)) {
+                    $(this).next().css('visibility', 'hidden')
+                } else {
+                    $(this).next().css('visibility', 'visible')
                 }
             });
             var $get_player = $('#get_player');
@@ -68,39 +69,39 @@
                 var user_pre = document.getElementsByName('user.province')[0].value;
                 var user_city = document.getElementsByName('user.city')[0].value;
                 var user_area = document.getElementsByName('user.area')[0].value;
-                var area = user_pre+'-'+user_city+'-'+user_area;
+                var area = user_pre + '-' + user_city + '-' + user_area;
                 /*获取毕业学校*/
-                var u_pre=$("#province option:selected").text();
-                var u_city=$("#city option:selected").text();
-                var u_school=$("#school option:selected").text();
+                var u_pre = $("#province option:selected").text();
+                var u_city = $("#city option:selected").text();
+                var u_school = $("#school option:selected").text();
                 var where = document.getElementById('where').value;
-                var school =u_pre+'-'+u_city+'-'+u_school;
-                if(username ===''){
-                    $('#username').next().css('visibility','visible')
-                }else if (pattern.test(phone)===false){
-                    $('#phone').next().css('visibility','visible')
+                var school = u_pre + '-' + u_city + '-' + u_school;
+                if (username === '') {
+                    $('#username').next().css('visibility', 'visible')
+                } else if (pattern.test(phone) === false) {
+                    $('#phone').next().css('visibility', 'visible')
 
-                }else if (time === ''){
-                    $('#time').next().css('visibility','visible')
-                }else{
+                } else if (time === '') {
+                    $('#time').next().css('visibility', 'visible')
+                } else {
                     console.log('启动Ajax请求...');
                     $.ajax({
-                        async:true,
-                        url:'/player/create_player/',
-                        type:'post',
-                        headers:{"X-CSRFToken":$.cookie("csrftoken")},
-                        data:{
-                            'username':username,
-                            'phone':phone,
-                            'time':time,
-                            'area':area,
-                            'school':school,
-                            'where':where
+                        async: true,
+                        url: '/player/create_player/',
+                        type: 'post',
+                        headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                        data: {
+                            'username': username,
+                            'phone': phone,
+                            'time': time,
+                            'area': area,
+                            'school': school,
+                            'where': where
                         },
-                        success:function (data) {
+                        success: function (data) {
                             tips(data)
                         },
-                        error:function (errorMsg) {
+                        error: function (errorMsg) {
                             tips(errorMsg)
                         }
                     });
@@ -116,37 +117,37 @@
                 var user_pre = document.getElementsByName('user.province1')[0].value;
                 var user_city = document.getElementsByName('user.city1')[0].value;
                 var user_area = document.getElementsByName('user.area1')[0].value;
-                var area = user_pre+'-'+user_city+'-'+user_area;
+                var area = user_pre + '-' + user_city + '-' + user_area;
                 /*获取毕业学校*/
-                var u_pre=$("#province1 option:selected").text();
-                var u_city=$("#city1 option:selected").text();
-                var u_school=$("#school1 option:selected").text();
-                var school =u_pre+'-'+u_city+'-'+u_school;
+                var u_pre = $("#province1 option:selected").text();
+                var u_city = $("#city1 option:selected").text();
+                var u_school = $("#school1 option:selected").text();
+                var school = u_pre + '-' + u_city + '-' + u_school;
                 var role = document.getElementById('role').value;
-                if(username ===''){
-                    $('#username').next().css('visibility','visible')
-                }else if (pattern.test(phone)===false){
-                    $('#phone').next().css('visibility','visible')
-                }else if (time === ''){
-                    $('#time').next().css('visibility','visible')
-                }else{
+                if (username === '') {
+                    $('#username').next().css('visibility', 'visible')
+                } else if (pattern.test(phone) === false) {
+                    $('#phone').next().css('visibility', 'visible')
+                } else if (time === '') {
+                    $('#time').next().css('visibility', 'visible')
+                } else {
                     $.ajax({
                         async: true,
                         url: '/player/create_role/',
                         type: 'post',
-                        headers:{"X-CSRFToken":$.cookie("csrftoken")},
-                        data:{
-                            'username':username,
-                            'phone':phone,
-                            'time':time,
-                            'area':area,
-                            'school':school,
-                            'role':role
+                        headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                        data: {
+                            'username': username,
+                            'phone': phone,
+                            'time': time,
+                            'area': area,
+                            'school': school,
+                            'role': role
                         },
-                        success:function (data) {
+                        success: function (data) {
                             tips(data)
                         },
-                        error:function (errorMsg) {
+                        error: function (errorMsg) {
                             tips(errorMsg)
                         }
                     })
@@ -214,7 +215,7 @@
             </form>
         </div>
         <div class="add">
-           <h2>基本信息</h2>
+            <h2>基本信息</h2>
             <form action="" method="post">
                 {% csrf_token %}
                 <label for="" class="add_player_a">
@@ -260,13 +261,13 @@
         </div>
     </div>
 </div>
- <div class="hsycms-model-mask" id="mask-tips"></div>
- <div class="hsycms-model hsycms-model-tips" id="tips">
- <div class="hsycms-model-text">这里是提示内容</div>
- </div>
+<div class="hsycms-model-mask" id="mask-tips"></div>
+<div class="hsycms-model hsycms-model-tips" id="tips">
+    <div class="hsycms-model-text">这里是提示内容</div>
+</div>
 </body>
 <script type="text/javascript">
-    new PCAS("user.province","user.city","user.area","重庆市","重庆市","忠县");
-    new PCAS("user.province1","user.city1","user.area1","重庆市","重庆市","忠县");
+    new PCAS("user.province", "user.city", "user.area", "重庆市", "重庆市", "忠县");
+    new PCAS("user.province1", "user.city1", "user.area1", "重庆市", "重庆市", "忠县");
 </script>
 </html>

@@ -11,5 +11,8 @@
     height: 93vh;
     width: 93%;
     overflow: auto;
-    background-image: url("../images/gblogin2.jpg");
+    /*background-image: url("../images/gblogin2.jpg");*/
+}
+.layui-table, .layui-table-view {
+    margin-top:-10px;
 }

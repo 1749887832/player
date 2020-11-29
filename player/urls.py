@@ -22,6 +22,7 @@ import app.admin.admin_addplayer as Add
 import app.admin.admin_showall as Show
 import app.admin.admin_record as Re
 import app.admin.admin_tactics as Ta
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 经理登录页面
@@ -61,11 +62,21 @@ urlpatterns = [
     # 查询该队的球员
     path('player/show_player/', Show.ShowTeam.showAllPlayer),
     # 战术管理接口
-    path('player/tactics/',Ta.Tactics.Show_all),
-    # 测试返回接口
-    path('player/data/',Ta.Tactics.Data),
+    path('player/tactics/', Ta.P_Tactics.Show_all),
+    # 查询所有战术
+    path('player/data/', Ta.P_Tactics.Data),
     # 新建战术页面跳转
-    path('player/create_tactics/',Ta.Tactics.Create_tatics),
+    path('player/create_tactics/', Ta.P_Tactics.Create_tatics),
+    # 教练接口
+    path('player/select_coach/', Ta.P_Tactics.Select_coach),
+    # 球员接口
+    path('player/select_player/', Ta.P_Tactics.Select_player),
+    # 图片接口
+    path('player/pic/', Ta.P_Tactics.Create_pic),
+    # 创建战术接口
+    path('player/create_tactic/', Ta.P_Tactics.Create_tatic),
+    # 删除战术接口
+    path('player/del_tactic/',Ta.P_Tactics.Del_tatics),
     # 球员数据接口
     path('player/record/', Re.Record.Show_all)
 ]

@@ -148,12 +148,14 @@ class Tactics(models.Model):
     # 主导者
     main_player = models.CharField(max_length=64, null=False)
     # 战术详情
-    context = models.CharField(max_length=128, null=False)
+    context = models.CharField(max_length=128, null=True)
     # 战术图片或视频
-    file = models.CharField(max_length=64, null=False)
+    file = models.CharField(max_length=64, null=True)
     # 创建时间
     create_time = models.DateTimeField(null=True)
     # 创建人
     create_user = models.CharField(max_length=32, null=False)
     # 修改人
     update_uer = models.CharField(max_length=32, null=False)
+    # 球队id
+    team_id = models.IntegerField(null=True)
