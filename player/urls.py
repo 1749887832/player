@@ -76,7 +76,22 @@ urlpatterns = [
     # 创建战术接口
     path('player/create_tactic/', Ta.P_Tactics.Create_tatic),
     # 删除战术接口
-    path('player/del_tactic/',Ta.P_Tactics.Del_tatics),
-    # 球员数据接口
-    path('player/record/', Re.Record.Show_all)
+    path('player/del_tactic/', Ta.P_Tactics.Del_tatics),
+    # 查看战术详情接口
+    path('player/title_context/', Ta.P_Tactics.Title_context),
+    # 编辑战术接口
+    path('player/update_tatics/', Ta.P_Tactics.Update_tatics),
+    # 编辑战术回显
+    path('player/p_tatics/',Ta.P_Tactics.P_tatics),
+    # 修改战术提交
+    path('player/update_tatic/',Ta.P_Tactics.Update_tatic),
+    # 查询战术标题接口
+    # path('player/select_title/', Ta.P_Tactics.Select_title),
+    # 数据中心接口
+    path('player/record/', Re.Record.Show_all),
+
+    # 数据中心球员板块
+    path('player/record_player/',Re.Record.Record_show),
+    # 查询赛季模块
+    path('player/select_season/',Re.Record.Select_season),
 ]

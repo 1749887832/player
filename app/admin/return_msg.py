@@ -12,3 +12,9 @@ class Msg:
             , "msg": date
         }
         return data
+
+    def ReNone(self, message):
+        if message is None:
+            return ''
+        else:
+            return message

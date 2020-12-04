@@ -60,6 +60,8 @@ class Schedule(models.Model):
     home = models.CharField(max_length=32, null=True)
     # 类型
     type = models.CharField(max_length=32, null=True)
+    # 绑定赛季
+    season_id = models.IntegerField(null=False)
 
 
 # 创建球员基础信息表
@@ -159,3 +161,9 @@ class Tactics(models.Model):
     update_uer = models.CharField(max_length=32, null=False)
     # 球队id
     team_id = models.IntegerField(null=True)
+
+
+class Season(models.Model):
+    id = models.AutoField(primary_key=True)
+    # 赛季名称
+    name = models.CharField(max_length=68, null=True)

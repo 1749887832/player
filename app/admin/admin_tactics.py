@@ -1,5 +1,6 @@
 import json
 import os
+import time
 import uuid
 
 from django.http import JsonResponse
@@ -28,15 +29,32 @@ class P_Tactics:
         return render(self, 'system_tactics.html', context)
 
     # 查询所有的战术
+    @csrf_exempt
     def Data(self):
+        # print(self.POST)
         # print(self.GET.get('page'))
-        page = int(self.GET.get('page'))
-        limit = int(self.GET.get('limit'))
+        page = int(self.POST.get('page'))
+        limit = int(self.POST.get('limit'))
+        title = Msg().ReNone(self.POST.get('main_title'))
+        main_player = Msg().ReNone(self.POST.get('main_player'))
+        start_player = Msg().ReNone(self.POST.get('start_player'))
+        end_player = Msg().ReNone(self.POST.get('end_player'))
+        time = self.POST.get('time')
+        if time == '':
+            time = '0001-1-1 至 9999-12-31'
+        times = time.split('至')
+        start_time = datetime.datetime(year=int(times[0].split('-')[0]), month=int(times[0].split('-')[1]),
+                                       day=int(times[0].split('-')[2]), hour=0, minute=0, second=0)
+        end_time = datetime.datetime(year=int(times[1].split('-')[0]), month=int(times[1].split('-')[1]),
+                                     day=int(times[1].split('-')[2]), hour=0, minute=0, second=0)
         # print(self.GET.get('limit'))
         try:
             user = UserProfile.objects.get(user_id=self.user.id)
             team_id = user.team_id
-            tactics = Tactics.objects.filter(team_id=team_id)[limit * (page - 1):page * limit]
+            tactics = Tactics.objects.filter(team_id=team_id, title__contains=title, main_player__contains=main_player,
+                                             start_player__contains=start_player, end_player__contains=end_player,
+                                             create_time__range=[start_time, end_time])[
+                      limit * (page - 1):page * limit]
             count = len(Tactics.objects.filter(team_id=team_id))
             data = list()
             for i in tactics:
@@ -129,7 +147,7 @@ class P_Tactics:
         global context
         for i in self.POST:
             print(i)
-            context = i[1:len(i)-1].strip(',').split(',')
+            context = i[1:len(i) - 1].strip(',').split(',')
         try:
             for i in context:
                 Tactics.objects.filter(id=i).update(team_id=0)
@@ -159,4 +177,86 @@ class P_Tactics:
                     fp.write(chunk)
         except:
             return JsonResponse(Msg().Error('图片上传失败'), safe=False)
+        return JsonResponse(Msg().Success(), safe=False)
+
+    # 查询标题详情接口
+    def Title_context(self):
+        title_id = self.POST.get('title_id')
+        try:
+            tactics = Tactics.objects.filter(id=title_id)
+            data = list()
+            for i in tactics:
+                context = dict()
+                context['id'] = i.id
+                context['title'] = i.title
+                context['main_player'] = UserProfile.objects.filter(id=i.main_player)[0].name
+                context['start_player'] = UserProfile.objects.filter(id=i.start_player)[0].name
+                context['end_player'] = UserProfile.objects.filter(id=i.end_player)[0].name
+                context['file'] = i.file
+                context['context'] = i.context
+                context['create_time'] = i.create_time.strftime('%Y-%m-%d %H:%M:%S')
+                data.append(context)
+        except Exception:
+            return JsonResponse(Msg().Error('战术查询失败'), safe=False)
+        return JsonResponse(Msg().Success(data), safe=False)
+
+    # 查询战术标题接口
+    # def Select_title(self):
+    #     user = UserProfile.objects.get(user_id=self.user.id)
+    #     team_id = user.team_id
+    #     title = Tactics.objects.filter(team_id=team_id)
+    #     data = list()
+    #     try:
+    #         for i in title:
+    #             context = dict()
+    #             context['title'] = i.title
+    #             data.append(context)
+    #     except Exception:
+    #         return JsonResponse(Msg().Error('标题查询失败'), safe=False)
+    #     return JsonResponse(Msg().Success(data), safe=False)
+    def Update_tatics(self):
+        global number
+        number = self.GET.get('number')
+        user = UserProfile.objects.get(user_id=self.user.id)
+        context = dict()
+        context['date'] = user
+        return render(self, 'system_updatetactics.html', context)
+
+    def P_tatics(self):
+        global number
+        try:
+            tactics = Tactics.objects.filter(id=number)
+            data = list()
+            for i in tactics:
+                context = dict()
+                context['id'] = i.id
+                context['title'] = i.title
+                context['main_player'] = i.main_player
+                context['start_player'] = i.start_player
+                context['end_player'] = i.end_player
+                context['file'] = i.file
+                context['context'] = i.context
+                context['create_time'] = i.create_time.strftime('%Y-%m-%d %H:%M:%S')
+                data.append(context)
+        except Exception:
+            return JsonResponse(Msg().Error('战术查询失败'), safe=False)
+        return JsonResponse(Msg().Success(data), safe=False)
+
+    def Update_tatic(self):
+        # print(self.POST)
+        global number
+        global update_data
+        for i in self.POST:
+            update_data = json.loads(i)
+        try:
+            Tactics.objects.filter(id=number).update(
+                title=update_data['title'],
+                main_player=update_data['main_player'],
+                start_player=update_data['start_player'],
+                end_player=update_data['end_player'],
+                file=picurl,
+                context=update_data['context'],
+            )
+        except Exception:
+            return JsonResponse(Msg().Error(), safe=False)
         return JsonResponse(Msg().Success(), safe=False)

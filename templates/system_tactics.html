@@ -15,210 +15,354 @@
 <body>
 {% include 'system_index.html' %}
 <div class="body">
+    <form class="layui-form" action="" style="margin-top: 20px">
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px">战术标题</label>
+            <div class="layui-input-block">
+                <input type="text" name="main_title" id="main_title" lay-verify="title" autocomplete="off"
+                       placeholder="请输入名称"
+                       class="layui-input" style="width: 300px;margin-left: -10px">
+            </div>
+        </div>
+        <i class="layui-btn layui-btn-primary layui-icon layui-icon-search"
+           style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="select"></i>
+        <button class="layui-btn layui-btn-primary" style="margin-top: -5px" id="chong">重置</button>
+        <br>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px">战术指导</label>
+            <div class="layui-input-inline">
+                <select name="modules" lay-verify="required" lay-search="jiaolian" id="main_player">
+                    <option value="">请选择战术指导</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px">进攻发起者</label>
+            <div class="layui-input-inline">
+                <select name="modules" lay-verify="required" lay-search="start_player" id="start_player">
+                    <option value="">请选择战术发起者</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px">进攻终结者</label>
+            <div class="layui-input-inline">
+                <select name="modules" lay-verify="required" lay-search="end_player" id="end_player">
+                    <option value="">请选择进攻终结者</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px">日期范围</label>
+            <div class="layui-input-inline">
+                <input type="text" name="modules" class="layui-input" id="test6" placeholder="请输入时间范围"
+                       style="width: 200px">
+            </div>
+        </div>
+    </form>
     <script type="text/html" id="toolbarDemo">
-        <form class="layui-form" action="">
-            <div class="layui-inline">
-                <label class="layui-form-label" style="width: 100px">搜索选择框</label>
-                <div class="layui-input-inline">
-                    <select name="modules" lay-verify="required" lay-search="">
-                        <option value="">直接选择或搜索选择</option>
-                        <option value="1">layer</option>
-                        <option value="2">form</option>
-                        <option value="3">layim</option>
-                        <option value="4">element</option>
-                        <option value="5">laytpl</option>
-                        <option value="6">upload</option>
-                        <option value="7">laydate</option>
-                        <option value="8">laypage</option>
-                        <option value="9">flow</option>
-                        <option value="10">util</option>
-                        <option value="11">code</option>
-                        <option value="12">tree</option>
-                        <option value="13">layedit</option>
-                        <option value="14">nav</option>
-                        <option value="15">tab</option>
-                        <option value="16">table</option>
-                        <option value="17">select</option>
-                        <option value="18">checkbox</option>
-                        <option value="19">switch</option>
-                        <option value="20">radio</option>
-                    </select>
-                </div>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">选择框</label>
-                <div class="layui-input-block">
-                    <select name="city" lay-verify="required">
-                        <option value=""></option>
-                        <option value="0">北京</option>
-                        <option value="1">上海</option>
-                        <option value="2">广州</option>
-                        <option value="3">深圳</option>
-                        <option value="4">杭州</option>
-                    </select>
-                </div>
-            </div>
-        </form>
         <div class="layui-btn-container">
             <button type="button" class="layui-btn" onclick="window.open('/player/create_tactics/',target='_self')">
                 新建战术
             </button>
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+            <button class="layui-btn layui-btn-danger" lay-event="getCheckData">删除</button>
         </div>
     </script>
     <table class="layui-hide" id="test" lay-filter="test"></table>
     <script type="text/html" id="barDemo">
-        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     </script>
     <div class="hsycms-model-mask" id="mask-confirm"></div>
-    <div class="hsycms-model hsycms-model-confirm" id="confirm">
-        <div class="hscysm-model-title">系统提示</div>
-        <div class="hsycms-model-text"></div>
-        <div class="hsycms-model-btn">
-            <button type="button" class="cancel">取消</button>
-            <button type="button" class="ok">确定</button>
+    <div class="hsycms-model hsycms-model-confirm" id="confirm" style="width: 900px;height: 600px">
+        <div class="hscysm-model-title" style="height: 40px;background-color: #2e3338;padding: 0">
+            <p>战术详情</p>
+            <p class="layui-icon layui-icon-close-fill" id="colse"></p>
+        </div>
+        <div style="" class="context_tactics">
+            <p>战术标题:<span id="context_title"></span></p>
+            <p class="p">指导教练：<span id="context_main"></span></p>
+            <p class="p">发起者：<span id="context_start"></span></p>
+            <p class="p">终结者：<span id="context_end"></span></p>
+            <p class="p" style="width: 310px">时间:<span id="context_time"></span></p>
+            <p>战术内容：<span id="context_content"></span></p>
+            <img src="" id="context_pic" alt="" style="height: 370px;width: 800px;display: block;margin: 0 auto">
         </div>
     </div>
     <script src="{% static 'layui/layui.js' %}" charset="utf-8"></script>
-    <script>
-        layui.use('table', function () {
-            var table = layui.table;
+</div>
+<div class="hsycms-model-mask" id="mask-confirm_sx"></div>
+<div class="hsycms-model hsycms-model-confirm" id="confirm_sx">
+    <div class="hscysm-model-title">系统提示</div>
+    <div class="hsycms-model-text"></div>
+    <div class="hsycms-model-btn">
+        <button type="button" class="cancel">取消</button>
+        <button type="button" class="ok">确定</button>
+    </div>
+</div>
 
-            table.render({
-                elem: '#test'
-                , url: '/player/data/'
-                , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
-                , defaultToolbar: []
-                , title: '用户数据表'
-                , cols: [[
-                    {type: 'checkbox', fixed: 'left'}
-                    , {field: 'id', title: 'ID', width: 60, fixed: 'left', unresize: true, sort: true}
-                    , {field: 'title', title: '名称', width: 120,}
-                    , {field: 'context', title: '战术内容', width: 320, edit: 'text'}
-                    , {field: 'main_player', title: '指导教练', width: 120}
-                    , {field: 'start_player', title: '进攻发起者', width: 120}
-                    , {field: 'end_player', title: '进攻终结者', width: 120}
-                    , {field: 'create_user', title: '创建人', width: 120}
-                    , {field: 'update_user', title: '修改人', width: 120}
-                    , {field: 'team', title: '球队名称', width: 120}
-                    , {field: 'create_time', title: '创建时间', width: 180, sort: true}
-                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
-                ]]
-                , page: true
-            });
+<script>
+    $('#colse').click(function () {
+        hsycms.close('confirm')
+    })
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#test6'
+            , range: '至'
+            , done: function (value) {
+                get_date(value)
+            }
+        });
+    });
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on('select', function (data) {
+            var time = document.getElementById('test6').value;
+            get_date(time)
+        });
+    });
+    $('#select').click(function () {
+        var time = document.getElementById('test6').value;
+        get_date(time);
+    })
 
-            //头工具栏事件
-            table.on('toolbar(test)', function (obj) {
-                var checkStatus = table.checkStatus(obj.config.id);
-                switch (obj.event) {
-                    case 'getCheckData':
-                        var date = new Array();
-                        var data = checkStatus.data;
-                        for(i=0;i<data.length;i++){
+    function get_date(time) {
+        var main_title = document.getElementById('main_title').value;
+        var main_player = document.getElementById('main_player').value;
+        var start_player = document.getElementById('start_player').value;
+        var end_player = document.getElementById('end_player').value;
+        var table = layui.table;
+        table.reload('test', {
+            where: {
+                'main_title': main_title,
+                'main_player': main_player,
+                'start_player': start_player,
+                'end_player': end_player,
+                'time': time,
+            },
+            page: {
+                curr: 1
+            }
+        }, 'data')
+    }
+
+    function title_context(id) {
+        $.ajax({
+            async: true,
+            url: '/player/title_context/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: {
+                'title_id': id
+            },
+            success: function (success) {
+                $('#context_title').text(success['data'][0].title)
+                $('#context_main').text(success['data'][0].main_player)
+                $('#context_start').text(success['data'][0].start_player)
+                $('#context_end').text(success['data'][0].end_player)
+                $('#context_time').text(success['data'][0].create_time)
+                $('#context_content').text(success['data'][0].context)
+                $('#context_pic').attr('src', "http://127.0.0.1:8000/static/" + success['data'][0].file)
+                hsycms.confirm('confirm', '战术详情',
+                    function () {
+                    },
+                    function () {
+                    },
+                )
+            },
+            error: function (error) {
+                layer.msg('查询失败')
+            }
+        })
+    }
+
+    layui.use('table', function () {
+        var table = layui.table;
+        var main_title = document.getElementById('main_title').value;
+        var main_player = document.getElementById('main_player').value;
+        var start_player = document.getElementById('start_player').value;
+        var end_player = document.getElementById('end_player').value;
+        var time = document.getElementById('test6').value;
+        table.render({
+            elem: '#test'
+            , url: '/player/data/'
+            , where: {
+                'main_title': main_title,
+                'main_player': main_player,
+                'start_player': start_player,
+                'end_player': end_player,
+                'time': time,
+            }
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: []
+            , method: 'post'
+            , title: '用户数据表'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'id', title: 'ID', width: 60, fixed: 'left', unresize: true, sort: true}
+                , {
+                    field: 'title', title: '战术标题', width: 120, templet: function (res) {
+                        return '<a style="text-decoration: none;cursor: pointer" onclick="title_context(' + res.id + ')">' + res.title + '</a>'
+                    }
+                }
+                , {field: 'context', title: '战术内容', width: 320, edit: 'text'}
+                , {field: 'main_player', title: '指导教练', width: 120}
+                , {field: 'start_player', title: '进攻发起者', width: 120}
+                , {field: 'end_player', title: '进攻终结者', width: 120}
+                , {field: 'create_user', title: '创建人', width: 120}
+                , {field: 'update_user', title: '修改人', width: 120}
+                , {field: 'team', title: '球队', width: 120}
+                , {field: 'create_time', title: '创建时间', width: 180, sort: true}
+                , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+            ]]
+            , page: true
+        });
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var date = new Array();
+                    var data = checkStatus.data;
+                    if (data.length === 0) {
+                        layer.msg('删除数据不能为空');
+                        break;
+                    } else {
+                        for (var i = 0; i < data.length; i++) {
                             date.push(data[i].id)
                         }
-                        hsycms.confirm('confirm', '确定删除数据吗',
-                        function () {
-                            $.ajax({
-                                async: true,
-                                url: '/player/del_tactic/',
-                                type: 'post',
-                                headers: {"X-CSRFToken": $.cookie("csrftoken")},
-                                data: JSON.stringify(date),
-                                success: function (success) {
-                                    table.reload('test', {
-                                        page: {
-                                            curr: 1 //重新从第 1 页开始
-                                        }
-                                        , where: {
-                                            url:'/player/data/'
-                                        }
-                                    }, 'data');
-                                    layer.msg('删除成功')
-                                },
-                                error: function (error) {
-                                    layer.msg(JSON.stringify(error['msg']))
-                                }
-                            })
-                        },
-                        function (res) {
-                            layer.msg('取消删除')
-                        },
-                    );
-                        break;
-                    case 'getCheckLength':
-                        var data = checkStatus.data;
-                        layer.msg('选中了：' + data.length + ' 个');
-                        break;
-                    case 'isAll':
-                        layer.msg(checkStatus.isAll ? '全选' : '未全选');
-                        break;
-
-                    //自定义头工具栏右侧图标 - 提示
-                    case 'LAYTABLE_TIPS':
-                        layer.alert('这是工具栏右侧自定义的一个图标按钮');
-                        break;
-                }
-            });
-
-            function tips(txt) {
-                hsycms.tips('tips', txt, function () {
-                }, 2000)
+                        hsycms.confirm('confirm_sx', '确定删除数据吗',
+                            function () {
+                                $.ajax({
+                                    async: true,
+                                    url: '/player/del_tactic/',
+                                    type: 'post',
+                                    headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                                    data: JSON.stringify(date),
+                                    success: function (success) {
+                                        table.reload('test', {
+                                            page: {
+                                                curr: 1 //重新从第 1 页开始
+                                            }
+                                            , where: {
+                                                url: '/player/data/'
+                                            }
+                                        }, 'data');
+                                        layer.msg('删除成功')
+                                    },
+                                    error: function (error) {
+                                        layer.msg(JSON.stringify(error['msg']))
+                                    }
+                                })
+                            },
+                            function (res) {
+                                layer.msg('取消删除')
+                            },
+                        );
+                    }
+                    break;
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
             }
-
-            //监听行工具事件
-            table.on('tool(test)', function (obj) {
-                var data = obj.data.id;
-                var date = new Array();
-                date.push(data);
-                if (obj.event === 'del') {
-                    hsycms.confirm('confirm', '确定删除数据吗',
-                        function () {
-                            $.ajax({
-                                async: true,
-                                url: '/player/del_tactic/',
-                                type: 'post',
-                                headers: {"X-CSRFToken": $.cookie("csrftoken")},
-                                data: JSON.stringify(date),
-                                success: function (success) {
-                                    table.reload('test', {
-                                        page: {
-                                            curr: 1 //重新从第 1 页开始
-                                        }
-                                        , where: {
-                                            url:'/player/data/'
-                                        }
-                                    }, 'data');
-                                    layer.msg('删除成功')
-                                },
-                                error: function (error) {
-                                    tips(JSON.stringify(error['msg']))
-                                }
-                            })
-                        },
-                        function (res) {
-                            layer.msg('取消删除')
-                        },
-                    );
-                    return false;
-                } else if (obj.event === 'edit') {
-                    layer.prompt({
-                        formType: 2
-                        , value: data.email
-                    }, function (value, index) {
-                        obj.update({
-                            email: value
-                        });
-                        layer.close(index);
-                    });
-                }
-            });
         });
-    </script>
-</div>
+
+        function tips(txt) {
+            hsycms.tips('tips', txt, function () {
+            }, 2000)
+        }
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data.id;
+            var date = new Array();
+            date.push(data);
+            if (obj.event === 'del') {
+                hsycms.confirm('confirm_sx', '确定删除该战术吗',
+                    function () {
+                        $.ajax({
+                            async: true,
+                            url: '/player/del_tactic/',
+                            type: 'post',
+                            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                            data: JSON.stringify(date),
+                            success: function (success) {
+                                table.reload('test', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                    , where: {
+                                        {#url: '/player/data/'#}
+                                    }
+                                }, 'data');
+                                layer.msg('删除成功')
+                            },
+                            error: function (error) {
+                                tips(JSON.stringify(error['msg']))
+                            }
+                        })
+                    },
+                    function (res) {
+                        layer.msg('取消删除')
+                    },
+                );
+                return false;
+            } else if (obj.event === 'edit') {
+                window.open(url='/player/update_tatics/?number='+data,target='_self')
+            }
+        });
+    });
+
+    function renderForm() {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
+    }
+
+    $(document).ready(function () {
+        $.ajax({
+            async: true,
+            url: '/player/select_coach/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    {#console.log(item.name);#}
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#main_player").append(option);
+                    renderForm();
+                });
+            },
+            error: function (msg) {
+                alert('错误')
+            }
+        });
+        $.ajax({
+            async: true,
+            url: '/player/select_player/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#start_player").append(option);
+                    $("#end_player").append(option);
+                    renderForm();
+                    {#form.render();#}
+                });
+            },
+            error: function (msg) {
+                layer.msg(JSON.stringify(msg['msg']))
+            }
+        });
+    });
+</script>
 </body>
 </html>
