@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>修改战术</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'css/system_createtactics.css' %}">
+    <link rel="stylesheet" href="{% static 'css/hsycmsAlert.css' %}">
+    <script src="{% static 'js/jQuery-3.5.1-min.js' %}"></script>
+    <script src="{% static 'js/hsycmsAlert.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
+    <script src="{% static 'layui/layui.js' %}" charset="utf-8"></script>
+</head>
+<body>
+{% include 'system_index.html' %}
+<div class="body">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;width: 93%">
+        <legend>修改战术</legend>
+    </fieldset>
+    <form class="layui-form" action="">
+        <div class="layui-form-item" style="width: 400px">
+            <label class="layui-form-label" style="width: 100px">战术名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" id="title" lay-verify="title" autocomplete="off" placeholder="请输入名称"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="width: 400px">
+            <label class="layui-form-label" style="width: 100px">战术指导</label>
+            <div class="layui-input-block">
+                <select name="main_player" lay-filter="main_player" id="main_player">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item" style="width: 400px">
+            <label class="layui-form-label" style="width: 100px">发&nbsp;起&nbsp;点</label>
+            <div class="layui-input-block">
+                <select name="start_player" lay-filter="selFilter" id="start_player">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item" style="width: 400px">
+            <label class="layui-form-label" style="width: 100px">终&nbsp;结&nbsp;点</label>
+            <div class="layui-input-block">
+                <select name="end_player" lay-filter="selFilter" id="end_player">
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-upload" style="margin-left: 30px">
+            <input type="button" class="layui-btn" id="test1" value="上传图片">
+            <div class="layui-upload-list">
+                <img class="layui-upload-img" style="height: 100px;width: 170px" id="pic">
+                <p id="demoText"></p>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text" style="width: 800px">
+            <label class="layui-form-label" style="width: 100px">详情信息</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" id="context" name="context"></textarea>
+            </div>
+        </div>
+        {#        <div class="layui-form-item layui-form-text">#}
+        {#            <label class="layui-form-label">编辑器</label>#}
+        {#            <div class="layui-input-block">#}
+        {#                <textarea class="layui-textarea layui-hide" name="content" lay-verify="content"#}
+        {#                          id="LAY_demo_editor"></textarea>#}
+        {#            </div>#}
+        {#        </div>#}
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">提交修改</button>
+                <p class="layui-btn layui-btn-primary" style="margin-bottom: 0" onclick="resetAll()">重置</p>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="hsycms-model-mask" id="mask-confirm"></div>
+<div class="hsycms-model hsycms-model-confirm" id="confirm">
+    <div class="hscysm-model-title">系统提示</div>
+    <div class="hsycms-model-text"></div>
+    <div class="hsycms-model-btn">
+        <button type="button" class="cancel">取消</button>
+        <button type="button" class="ok">确定</button>
+    </div>
+</div>
+<script>
+    var id;
+    function resetAll() {
+        document.getElementById('title').value = ''
+        document.getElementById('main_player').value = ''
+        document.getElementById('start_player').value = ''
+        document.getElementById('end_player').value = ''
+        document.getElementById('context').value = ''
+    }
+
+    function renderForm() {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
+    }
+
+
+    $(document).ready(function () {
+        $.ajax({
+            async: true,
+            url: '/player/select_coach/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#main_player").append(option);
+                    renderForm();
+                });
+                $.ajax({
+                    async: true,
+                    url: '/player/p_tatics/',
+                    type: 'post',
+                    headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                    data: [],
+                    success: function (date) {
+                        id = date['data'][0].id;
+                        $('#title').attr('value', date['data'][0].title)
+                        $('#pic').attr('src', 'http://127.0.0.1:8000/static/' + date['data'][0].file)
+                        $('#context').val(date['data'][0].context)
+                        layui.use('form', function () {
+                            var form = layui.form
+                            var main_player = 'dd[lay-value=' + date['data'][0].main_player + ']';// 设置value
+                            $('#main_player').siblings("div .layui-form-select").find('dl').find(main_player).click();// 查找点击
+                            form.render('select');// 再次渲染select
+                        })
+                    },
+                    error: function (msg) {
+                        layer.msg('接口报错')
+                    }
+                })
+            },
+            error: function (msg) {
+                layer.msg('接口访问失败')
+            }
+        });
+        $.ajax({
+            async: true,
+            url: '/player/select_player/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#start_player").append(option);
+                    $("#end_player").append(option);
+                    renderForm();
+                    {#form.render();#}
+                });
+                $.ajax({
+                    async: true,
+                    url: '/player/p_tatics/',
+                    type: 'post',
+                    headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                    data: [],
+                    success: function (date) {
+                        $('#title').attr('value', date['data'][0].title)
+                        $('#pic').attr('src', 'http://127.0.0.1:8000/static/' + date['data'][0].file)
+                        $('#context').val(date['data'][0].context)
+                        layui.use('form', function () {
+                            var form = layui.form
+                            var start_player = 'dd[lay-value=' + date['data'][0].start_player + ']';// 设置value
+                            var end_player = 'dd[lay-value=' + date['data'][0].end_player + ']';// 设置value
+                            $('#start_player').siblings("div .layui-form-select").find('dl').find(start_player).click();// 查找点击
+                            $('#end_player').siblings("div .layui-form-select").find('dl').find(end_player).click();// 查找点击
+                            form.render('select');// 再次渲染select
+                        })
+                    },
+                    error: function (msg) {
+                        layer.msg('接口报错')
+                    }
+                })
+            },
+            error: function (msg) {
+                layer.msg('接口访问失败')
+            }
+        });
+    });
+    layui.use(['form', 'layedit', 'laydate'], function () {
+        var form = layui.form
+            , layer = layui.layer
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '#date'
+        });
+        laydate.render({
+            elem: '#date1'
+        });
+
+        //创建一个编辑器
+        var editIndex = layedit.build('LAY_demo_editor');
+
+        //自定义验证规则
+        form.verify({
+            title: function (value) {
+                if (value.length === 0) {
+                    return '标题不能为空';
+                }
+            }
+            , content: function (value) {
+                layedit.sync(editIndex);
+            }
+        });
+        //监听提交
+        form.on('submit(demo1)', function (data) {
+            date = JSON.stringify(data.field);
+            {#console.log(date)#}
+            hsycms.confirm('confirm', '是否修改战术',
+                function () {
+                    $.ajax({
+                        async: true,
+                        url: '/player/update_tatic/',
+                        type: 'post',
+                        headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                        data: JSON.stringify(data.field),
+                        success: function (success) {
+                            window.open('/player/tactics/', target = '_self')
+                        },
+                        error: function (error) {
+                            layer.msg('接口访问失败')
+                        }
+                    })
+                },
+                function (res) {
+                    layer.msg('取消修改')
+                },
+            );
+            return false;
+        });
+    });
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        var uploadInst = upload.render({
+            elem: '#test1'
+            , url: '/player/pic/'
+            , before: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $('#pic').attr('src', result); //图片链接（base64）
+                });
+            }
+            , done: function (res) {
+                //如果上传失败
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            }
+        });
+    })
+</script>
+
+</body>
+</html>
