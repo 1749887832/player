@@ -104,9 +104,9 @@ class P_Tactics:
         user = UserProfile.objects.get(user_id=self.user.id)
         team_id = user.team_id
         try:
-            coach = UserProfile.objects.filter(team_id=team_id, rights=4)
+            player = UserProfile.objects.filter(team_id=team_id, rights=4)
             data = list()
-            for i in coach:
+            for i in player:
                 context = dict()
                 context['id'] = i.id
                 context['name'] = i.name
@@ -146,7 +146,7 @@ class P_Tactics:
     def Del_tatics(self):
         global context
         for i in self.POST:
-            print(i)
+            # print(i)
             context = i[1:len(i) - 1].strip(',').split(',')
         try:
             for i in context:
@@ -222,6 +222,7 @@ class P_Tactics:
         context['date'] = user
         return render(self, 'system_updatetactics.html', context)
 
+    #  查询接口回显
     def P_tatics(self):
         global number
         try:
@@ -242,6 +243,7 @@ class P_Tactics:
             return JsonResponse(Msg().Error('战术查询失败'), safe=False)
         return JsonResponse(Msg().Success(data), safe=False)
 
+    # 修改战术接口
     def Update_tatic(self):
         # print(self.POST)
         global number

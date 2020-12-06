@@ -6,6 +6,7 @@
     text-decoration: none;
     font-family: '楷体';
 }
+
 .body {
     float: left;
     height: 93vh;
@@ -13,7 +14,8 @@
     overflow: auto;
     /*background-image: url("../images/gblogin2.jpg");*/
 }
-body .hsycms-model .hscysm-model-title .layui-icon{
+
+body .hsycms-model .hscysm-model-title .layui-icon {
     cursor: pointer;
     color: whitesmoke;
     display: block;
@@ -24,7 +26,8 @@ body .hsycms-model .hscysm-model-title .layui-icon{
     padding: 0;
     margin-top: 5px;
 }
-body .hsycms-model .hscysm-model-title p{
+
+body .hsycms-model .hscysm-model-title p {
     text-align: left;
     width: 90%;
     height: 100%;
@@ -32,17 +35,67 @@ body .hsycms-model .hscysm-model-title p{
     color: whitesmoke;
     padding: 10px;
 }
-.body .open_context{
+
+.body .open_context {
     margin: 20px;
     height: 180px;
 }
-.body .open_context p{
+
+.body .open_context p {
     padding: 10px;
     background-color: #f6e0d8;
     color: #f1713f;
     margin-bottom: 20px;
     border-radius: 5px;
 }
-body .open_context .layui-anim{
+
+body .open_context .layui-anim {
     height: 140px;
+}
+
+.create_season {
+    top: 7vh;
+    left: 7%;
+    float: left;
+    height: 93vh;
+    width: 93%;
+    background-color: #ececec;
+    display: none;
+    position: fixed;
+    z-index: 9999;
+}
+
+.create_season .context {
+    height: 80%;
+    width: 60%;
+    background-color: #ffffff;
+    margin: 5% auto;
+    padding: 20px;
+}
+
+.create_season .context p {
+    margin-left: 17px;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+body .create_season .context .layui-form-item .layui-inline .layui-input-inline {
+    width: 200px;
+}
+
+body .layui-field-title {
+    margin: 0;
+}
+
+body .layui-input-inline input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
 }

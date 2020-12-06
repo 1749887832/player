@@ -119,6 +119,7 @@ class Player_Data(models.Model):
     specialty = models.CharField(max_length=64, null=True)
 
 
+#  创建合同类型表
 class SignUp(models.Model):
     id = models.AutoField(primary_key=True)
     # 合同类型
@@ -139,6 +140,7 @@ class SignUp(models.Model):
     user_id = models.IntegerField(null=False)
 
 
+# 创建战术模块表
 class Tactics(models.Model):
     id = models.AutoField(primary_key=True)
     # 战术名称
@@ -163,7 +165,43 @@ class Tactics(models.Model):
     team_id = models.IntegerField(null=True)
 
 
+# 创建赛季表
 class Season(models.Model):
     id = models.AutoField(primary_key=True)
     # 赛季名称
     name = models.CharField(max_length=68, null=True)
+
+
+# 创建球员数据表
+class Player_season(models.Model):
+    id = models.AutoField(primary_key=True)
+    # 得分
+    score = models.CharField(max_length=32, null=True)
+    # 上场时间
+    time = models.CharField(max_length=32, null=True)
+    # 投篮
+    shoot = models.CharField(max_length=32, null=True)
+    # 三分
+    three_points = models.CharField(max_length=32, null=True)
+    # 罚球
+    free_throw = models.CharField(max_length=32, null=True)
+    # 前场篮板
+    front_court = models.CharField(max_length=32, null=True)
+    # 后场篮板
+    back_court = models.CharField(max_length=32, null=True)
+    # 助攻
+    assists = models.CharField(max_length=32, null=True)
+    # 抢断
+    snatch = models.CharField(max_length=32, null=True)
+    # 盖帽
+    block_shot = models.CharField(max_length=32, null=True)
+    # 失误
+    error = models.CharField(max_length=32, null=True)
+    # 犯规
+    break_rules = models.CharField(max_length=32, null=True)
+    # 球员
+    player_id = models.IntegerField(null=False)
+    # 赛季id
+    season_id = models.IntegerField(null=False)
+    # 赛程id
+    schedule_id = models.IntegerField(null=False)

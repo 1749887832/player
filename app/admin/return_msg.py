@@ -18,3 +18,11 @@ class Msg:
             return ''
         else:
             return message
+
+    def ChangMsg(self, msg):
+        the_one = int(msg.split('-')[0])
+        the_two = int(msg.split('-')[-1])
+        if the_one > the_two:
+            return msg
+        else:
+            return str(the_two) + '-' + str(the_one)

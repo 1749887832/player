@@ -94,4 +94,10 @@ urlpatterns = [
     path('player/record_player/',Re.Record.Record_show),
     # 查询赛季模块
     path('player/select_season/',Re.Record.Select_season),
+    # 查询赛程模块
+    path('player/select_players/',Re.Record.Select_players),
+    # 查询赛程模块
+    path('player/player_schedule/',Re.Record.Select_schedule),
+    # 添加球员数据
+    path('player/add_playerdata/',Re.Record.Add_playerdata),
 ]

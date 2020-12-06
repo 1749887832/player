@@ -91,10 +91,10 @@
 <script>
     var id;
     function resetAll() {
-        document.getElementById('title').value = ''
-        document.getElementById('main_player').value = ''
-        document.getElementById('start_player').value = ''
-        document.getElementById('end_player').value = ''
+        document.getElementById('title').value = '';
+        document.getElementById('main_player').value = '';
+        document.getElementById('start_player').value = '';
+        document.getElementById('end_player').value = '';
         document.getElementById('context').value = ''
     }
 
@@ -128,11 +128,11 @@
                     data: [],
                     success: function (date) {
                         id = date['data'][0].id;
-                        $('#title').attr('value', date['data'][0].title)
-                        $('#pic').attr('src', 'http://127.0.0.1:8000/static/' + date['data'][0].file)
-                        $('#context').val(date['data'][0].context)
+                        $('#title').attr('value', date['data'][0].title);
+                        $('#pic').attr('src', 'http://127.0.0.1:8000/static/' + date['data'][0].file);
+                        $('#context').val(date['data'][0].context);
                         layui.use('form', function () {
-                            var form = layui.form
+                            var form = layui.form;
                             var main_player = 'dd[lay-value=' + date['data'][0].main_player + ']';// 设置value
                             $('#main_player').siblings("div .layui-form-select").find('dl').find(main_player).click();// 查找点击
                             form.render('select');// 再次渲染select
@@ -169,11 +169,11 @@
                     headers: {"X-CSRFToken": $.cookie("csrftoken")},
                     data: [],
                     success: function (date) {
-                        $('#title').attr('value', date['data'][0].title)
-                        $('#pic').attr('src', 'http://127.0.0.1:8000/static/' + date['data'][0].file)
-                        $('#context').val(date['data'][0].context)
+                        $('#title').attr('value', date['data'][0].title);
+                        $('#pic').attr('src', 'http://127.0.0.1:8000/static/' + date['data'][0].file);
+                        $('#context').val(date['data'][0].context);
                         layui.use('form', function () {
-                            var form = layui.form
+                            var form = layui.form;
                             var start_player = 'dd[lay-value=' + date['data'][0].start_player + ']';// 设置value
                             var end_player = 'dd[lay-value=' + date['data'][0].end_player + ']';// 设置value
                             $('#start_player').siblings("div .layui-form-select").find('dl').find(start_player).click();// 查找点击

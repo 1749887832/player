@@ -15,7 +15,8 @@
 <body>
 {% include 'system_index.html' %}
 <div class="body">
-    <form class="layui-form" action="" style="margin-top: 20px">
+    <form class="layui-form" action="" style="margin-top: 20px" method="post">
+        {% csrf_token %}
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px">战术标题</label>
             <div class="layui-input-block">
@@ -100,11 +101,10 @@
         <button type="button" class="ok">确定</button>
     </div>
 </div>
-
 <script>
     $('#colse').click(function () {
         hsycms.close('confirm')
-    })
+    });
     layui.use('laydate', function () {
         var laydate = layui.laydate;
         laydate.render({
@@ -125,7 +125,7 @@
     $('#select').click(function () {
         var time = document.getElementById('test6').value;
         get_date(time);
-    })
+    });
 
     function get_date(time) {
         var main_title = document.getElementById('main_title').value;
@@ -157,13 +157,13 @@
                 'title_id': id
             },
             success: function (success) {
-                $('#context_title').text(success['data'][0].title)
-                $('#context_main').text(success['data'][0].main_player)
-                $('#context_start').text(success['data'][0].start_player)
-                $('#context_end').text(success['data'][0].end_player)
-                $('#context_time').text(success['data'][0].create_time)
-                $('#context_content').text(success['data'][0].context)
-                $('#context_pic').attr('src', "http://127.0.0.1:8000/static/" + success['data'][0].file)
+                $('#context_title').text(success['data'][0].title);
+                $('#context_main').text(success['data'][0].main_player);
+                $('#context_start').text(success['data'][0].start_player);
+                $('#context_end').text(success['data'][0].end_player);
+                $('#context_time').text(success['data'][0].create_time);
+                $('#context_content').text(success['data'][0].context);
+                $('#context_pic').attr('src', "http://127.0.0.1:8000/static/" + success['data'][0].file);
                 hsycms.confirm('confirm', '战术详情',
                     function () {
                     },
