@@ -82,22 +82,24 @@ urlpatterns = [
     # 编辑战术接口
     path('player/update_tatics/', Ta.P_Tactics.Update_tatics),
     # 编辑战术回显
-    path('player/p_tatics/',Ta.P_Tactics.P_tatics),
+    path('player/p_tatics/', Ta.P_Tactics.P_tatics),
     # 修改战术提交
-    path('player/update_tatic/',Ta.P_Tactics.Update_tatic),
+    path('player/update_tatic/', Ta.P_Tactics.Update_tatic),
     # 查询战术标题接口
     # path('player/select_title/', Ta.P_Tactics.Select_title),
     # 数据中心接口
     path('player/record/', Re.Record.Show_all),
 
     # 数据中心球员板块
-    path('player/record_player/',Re.Record.Record_show),
+    path('player/record_player/', Re.Record.Record_show),
     # 查询赛季模块
-    path('player/select_season/',Re.Record.Select_season),
+    path('player/select_season/', Re.Record.Select_season),
     # 查询赛程模块
-    path('player/select_players/',Re.Record.Select_players),
+    path('player/select_players/', Re.Record.Select_players),
     # 查询赛程模块
-    path('player/player_schedule/',Re.Record.Select_schedule),
+    path('player/player_schedule/', Re.Record.Select_schedule),
     # 添加球员数据
-    path('player/add_playerdata/',Re.Record.Add_playerdata),
+    path('player/add_playerdata/', Re.Record.Add_playerdata),
+    # 显示球队数据
+    path('player/show_teamrecord/', Re.Record.Show_teamrecord),
 ]

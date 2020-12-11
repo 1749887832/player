@@ -12,7 +12,8 @@
     <script src="{% static 'js/jquery.cookie.js' %}"></script>
 </head>
 <body>
-<form class="layui-form" action="">
+<form class="layui-form" action="" method="post">
+    {% csrf_token %}
     <div class="layui-inline">
         <label class="layui-form-label" style="width: 100px">球员名称</label>
         <div class="layui-input-block">
@@ -28,7 +29,8 @@
     <div class="layui-inline">
         <label class="layui-form-label" style="width: 100px">赛季</label>
         <div class="layui-input-inline">
-            <select name="modules" lay-verify="required" lay-search="jiaolian" id="main_player">
+            <select name="modules" lay-verify="required" lay-filter="all_player" lay-search="all_player"
+                    id="main_season">
                 <option value="">请选择赛季</option>
             </select>
         </div>
@@ -36,35 +38,23 @@
     <div class="layui-inline">
         <label class="layui-form-label" style="width: 100px">球员</label>
         <div class="layui-input-inline">
-            <select name="modules" lay-verify="required" lay-search="start_player" id="start_player">
+            <select name="modules" lay-verify="required" lay-filter="all_player" lay-search="all_player"
+                    id="main_player">
                 <option value="">请选择球员</option>
             </select>
         </div>
     </div>
-    <div class="layui-inline">
-        <label class="layui-form-label" style="width: 100px">球队</label>
-        <div class="layui-input-inline">
-            <select name="modules" lay-verify="required" lay-search="end_player" id="end_player">
-                <option value="">请选择球队</option>
-            </select>
-        </div>
-    </div>
-    <div class="layui-inline">
-        <label class="layui-form-label" style="width: 100px">日期范围</label>
-        <div class="layui-input-inline">
-            <input type="text" name="modules" class="layui-input" id="test6" placeholder="请输入时间范围"
-                   style="width: 200px">
-        </div>
-    </div>
 </form>
-<script type="text/html" id="toolbarDemo">
+<script type="text/html" id="toolbarplayer">
     <div class="layui-btn-container">
         <button type="button" class="layui-btn" onclick="open_create()">
             录入球员数据
         </button>
     </div>
 </script>
-<table class="layui-hide" id="test" lay-filter="test"></table>
+<table class="layui-hide" id="test" lay-filter="test">
+    <th lay-data="{field:'battle', width: 200, templet: '#battle'}">赛程</th>
+</table>
 <div class="hsycms-model-mask" id="mask-confirm"></div>
 <div class="hsycms-model hsycms-model-confirm" id="confirm" style="width: 400px;height: 300px">
     <div class="hscysm-model-title" style="height: 40px;background-color: #2e3338;padding: 0">
@@ -212,7 +202,7 @@
             </div>
             <div class="layui-form-item anniu">
                 <div class="layui-input-block">
-                    <p class="layui-btn layui-btn-primary" style="margin-top: 10px">取消</p>
+                    <p class="layui-btn layui-btn-primary" style="margin-top: 10px" onclick="close_wind()">取消</p>
                     <button type="submit" class="layui-btn" lay-submit="" lay-filter="add_player_data">确认</button>
                 </div>
             </div>
@@ -220,7 +210,53 @@
     </div>
 </div>
 <script>
+    function close_wind() {
+        $('.create_season').css('display', 'none');
+    }
+
     {# 这里是正则匹配输入投篮类型的规则 #}
+    $(document).ready(function () {
+        $.ajax({
+            async: true,
+            url: '/player/select_player/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#main_player").append(option);
+                    renderForm();
+                    {#form.render();#}
+                });
+            },
+            error: function (msg) {
+                layer.msg(JSON.stringify(msg['msg']))
+            }
+        });
+        $.ajax({
+            async: true,
+            url: '/player/select_season/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                {#console.log(date)#}
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    {#console.log(item.name);#}
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#season").append(option);
+                    $("#main_season").append(option);
+                    renderForm();
+                });
+            },
+            error: function (msg) {
+                layer.msg('接口报错')
+            }
+        });
+    });
 
     function clearNumber(obj) {
         var objRegExp = /^[\d]+-[\d]+$/;
@@ -243,15 +279,18 @@
                     headers: {"X-CSRFToken": $.cookie("csrftoken")},
                     data: JSON.stringify(data.field),
                     success: function (success) {
-                        $('#schedule').attr("disabled", false);
+                        $('.create_season').css('display', 'none');
                         {#renderForm();#}
-                        return false;
+                        console.log(success)
+
                     },
                     error: function (error) {
                         layer.msg('接口访问失败');
                         return false;
                     }
-                })
+                });
+                get_data();
+                return false
             }
         });
         form.on('select(player)', function (data) {
@@ -287,7 +326,43 @@
                 })
             }
         })
+        form.on('select(all_player)', function () {
+            const th = document.getElementsByTagName('th')
+            const td = document.getElementsByTagName('td')
+            for (let i = 0; i < th.length; i++) {
+                if (th[i].getAttribute('data-field') === 'battle') {
+                    th[i].style.display = data.value == 1 ? 'none' : 'table-cell'
+                }
+            }
+
+            for (let i = 0; i < td.length; i++) {
+                if (td[i].getAttribute('data-field') === 'battle') {
+                    td[i].style.display = data.value == 1 ? 'none' : 'table-cell'
+                }
+            }
+            get_data();
+        })
     });
+    $('#select').click(function () {
+        get_data();
+    })
+
+    function get_data() {
+        var main_title = document.getElementById('main_title').value;
+        var main_season = document.getElementById('main_season').value;
+        var main_player = document.getElementById('main_player').value;
+        var table = layui.table;
+        table.reload('test', {
+            where: {
+                'main_title': main_title,
+                'main_season': main_season,
+                'main_player': main_player
+            },
+            page: {
+                curr: 1
+            }
+        }, 'data')
+    }
 
     function open_season() {
         var season = document.getElementById('season').value;
@@ -332,30 +407,9 @@
     });
 
     function open_create() {
-        $('#season .a').remove();
-        $.ajax({
-            async: true,
-            url: '/player/select_season/',
-            type: 'post',
-            headers: {"X-CSRFToken": $.cookie("csrftoken")},
-            data: [],
-            success: function (date) {
-                {#console.log(date)#}
-                jsonDate = JSON.stringify(date['data']);
-                $.each(JSON.parse(jsonDate), function (i, item) {
-                    {#console.log(item.name);#}
-                    var option = "<option class='a' value=" + item.id + ">" + item.name + "</option>";
-                    $("#season").append(option);
-                    renderForm();
-                });
-            },
-            error: function (msg) {
-                layer.msg('接口报错')
-            }
-        });
         hsycms.confirm('confirm', '选择赛季',
             function () {
-                console.log(document.getElementById('season').value);
+                {#console.log(document.getElementById('season').value);#}
             },
             function (res) {
                 layer.msg('取消删除')
@@ -363,49 +417,96 @@
         );
     }
 
-    layui.use('laydate', function () {
-        var laydate = layui.laydate;
-        laydate.render({
-            elem: '#test6'
-            , range: '至'
-            , done: function (value) {
-                {#get_date(value)#}
-            }
-        });
-    });
     layui.use('table', function () {
         var table = layui.table;
-
+        var main_title = document.getElementById('main_title').value;
+        var main_season = document.getElementById('main_season').value;
+        var main_player = document.getElementById('main_player').value;
         table.render({
             elem: '#test'
             , url: '/player/record_player/'
-            , toolbar: '#toolbarDemo'
+            , toolbar: '#toolbarplayer'
             , title: '用户数据表'
+            , where: {
+                'main_title': main_title,
+                'main_season': main_season,
+                'main_player': main_player
+            }
+            , method: 'post'
             , totalRow: true
             , cols: [[
-                {field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计行'}
-                , {field: 'username', title: '用户名', width: 120, edit: 'text'}
-                , {field: 'email', title: '邮箱', width: 150, edit: 'text'}
-                , {field: 'experience', title: '积分', width: 100, sort: true, totalRow: true}
-                , {field: 'sex', title: '性别', width: 80, edit: 'text', sort: true}
-                , {field: 'logins', title: '登入次数', width: 100, sort: true, totalRow: true}
-                , {field: 'sign', title: '签名'}
-                , {field: 'city', title: '城市', width: 100}
-                , {field: 'ip', title: 'IP', width: 120}
-                , {field: 'joinTime', title: '加入时间', width: 120}
+                {field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '汇总'}
+                , {field: 'name', title: '名字', width: 120}
+                , {field: 'battle', title: '赛程', width: 150, hide: true}
+                , {field: 'score', title: '得分', width: 80, sort: true, totalRow: true}
+                , {field: 'time', title: '时间', width: 80, sort: true, totalRow: true}
+                , {field: 'shoot', title: '出手次数', width: 120, sort: true, totalRow: true}
+                , {field: 'hit', title: '命中率', width: 100, sort: true, templet: ({hit}) => `${hit}%`}
+                , {field: 'three_points', title: '三分次数', width: 120, sort: true, totalRow: true}
+                , {
+                    field: 'three_hit',
+                    title: '三分命中率',
+                    width: 120,
+                    sort: true,
+                    templet: ({three_hit}) => `${three_hit}%`
+                }
+                , {field: 'free_throw', title: '罚球次数', width: 120, sort: true, totalRow: true}
+                , {
+                    field: 'hit_throw',
+                    title: '罚球命中率',
+                    width: 120,
+                    sort: true,
+                    templet: ({hit_throw}) => `${hit_throw}%`
+                }
+                , {field: 'all_court', title: '篮板', width: 80, sort: true, totalRow: true}
+                , {field: 'front_court', title: '前场', width: 80, sort: true, totalRow: true}
+                , {field: 'back_court', title: '后场', width: 80, sort: true, totalRow: true}
+                , {field: 'assists', title: '助攻', width: 80, sort: true, totalRow: true}
+                , {field: 'snatch', title: '抢断', width: 80, sort: true, totalRow: true}
+                , {field: 'block_shot', title: '盖帽', width: 80, sort: true, totalRow: true}
+                , {field: 'error', title: '失误', width: 80, sort: true, totalRow: true}
+                , {field: 'break_rules', title: '犯规', width: 80, sort: true, totalRow: true}
             ]]
             , page: true
             , response: {
-                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+                statusCode: 0 //重新规定成功的状态码为 200，table 组件默认为 0
             }
             , parseData: function (res) { //将原始数据解析成 table 组件所规定的数据
                 return {
-                    "code": res.status, //解析接口状态
-                    "msg": res.message, //解析提示文本
-                    "count": res.total, //解析数据长度
-                    "data": res.rows.item //解析数据列表
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": res.data //解析数据列表
                 };
             }
+        });
+        table.render({
+            elem: '#team'
+            , url: '/player/show_teamrecord/'
+            , toolbar: true
+            , title: '用户数据表'
+            , defaultToolbar: []
+            , method: 'post'
+            , cols: [[
+                {field: 'id', title: 'ID', width: 80, fixed: 'left'}
+                , {field: 'time', title: '时间', width: 220}
+                , {field: 'type', title: '类型', width: 120}
+                , {field: 'team_area', title: '球馆', width: 160}
+                , {
+                    field: 'team_one', title: '主场球队', width: 220, templet: function (data) {
+                        return '<img src=http://127.0.0.1:8000/static/' + data.team_onepic + '/>' + '<span>' + data.team_one + '</span>'
+                    }
+                }
+                , {
+                    field: 'one_score', title: '比分', width: 180, templet: function (data) {
+                        return data.one_score + '—' + data.two_score
+                    }
+                }
+                , {field: 'team_two', title: '客场球队', width: 220}
+                , {field: 'result', title: '结果', width: 120}
+                , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+            ]]
+            , page: true
         });
     });
 </script>

@@ -181,10 +181,16 @@ class Player_season(models.Model):
     time = models.CharField(max_length=32, null=True)
     # 投篮
     shoot = models.CharField(max_length=32, null=True)
+    # 命中投篮数
+    hit_shoot = models.CharField(max_length=32, null=True)
     # 三分
     three_points = models.CharField(max_length=32, null=True)
+    # 命中三分熟
+    hit_points = models.CharField(max_length=32, null=True)
     # 罚球
     free_throw = models.CharField(max_length=32, null=True)
+    # 命中罚球数
+    hit_throw = models.CharField(max_length=32, null=True)
     # 前场篮板
     front_court = models.CharField(max_length=32, null=True)
     # 后场篮板
@@ -205,3 +211,5 @@ class Player_season(models.Model):
     season_id = models.IntegerField(null=False)
     # 赛程id
     schedule_id = models.IntegerField(null=False)
+    # 球队id
+    team_id = models.IntegerField(null=False)

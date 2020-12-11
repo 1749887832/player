@@ -1,12 +1,14 @@
 import json
 
-from django.db.models import Q
+from django.db.models import Q, F
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 from app.models import UserProfile, Player_Basic, Season, Schedule, Team, Player_season, SignUp
 from app.admin.return_msg import Msg
 import datetime, time
+from django.db.models import Avg, Min, Max, Sum, Count
 
 
 class Record:
@@ -98,13 +100,14 @@ class Record:
         except Exception:
             return JsonResponse(Msg().Error(), safe=False)
 
+    # 这是添加球员数据的方法
     def Add_playerdata(self):
         print(self.POST)
         global add_data
         for i in self.POST:
             add_data = json.loads(i)
         season_id = Schedule.objects.get(id=add_data['schedule_id']).season_id
-        print(season_id)
+        # print(season_id)
         print(add_data['shoot'])
         Msg().ChangMsg(add_data['shoot'])
         print(Msg().ChangMsg(add_data['shoot']))
@@ -117,9 +120,12 @@ class Record:
                 player_id=add_data['player_id'],
                 schedule_id=add_data['schedule_id'],
                 time=add_data['time'],
-                shoot=Msg().ChangMsg(add_data['shoot']),
-                three_points=Msg().ChangMsg(add_data['three_points']),
-                free_throw=Msg().ChangMsg(add_data['free_throw']),
+                shoot=Msg().ChangMsg(add_data['shoot']).split('-')[0],
+                hit_shoot=Msg().ChangMsg(add_data['shoot']).split('-')[-1],
+                three_points=Msg().ChangMsg(add_data['three_points']).split('-')[0],
+                hit_points=Msg().ChangMsg(add_data['three_points']).split('-')[-1],
+                free_throw=Msg().ChangMsg(add_data['free_throw']).split('-')[0],
+                hit_throw=Msg().ChangMsg(add_data['free_throw']).split('-')[-1],
                 assists=add_data['assists'],
                 front_court=add_data['front_court'],
                 back_court=add_data['back_court'],
@@ -128,109 +134,185 @@ class Record:
                 error=add_data['error'],
                 break_rules=add_data['break_rules'],
                 season_id=season_id,
-                score=add_data['score']
+                score=add_data['score'],
+                team_id=UserProfile.objects.get(user_id=self.user.id).team_id
             )
             player_data.save()
             return JsonResponse(Msg().Success(), safe=False)
         except Exception:
             return JsonResponse(Msg().Error(), safe=False)
 
+    @csrf_exempt
     def Record_show(self):
-        data = {
-            "status": 200
-            , "message": ""
-            , "total": 8
-            , "rows": {
-                "item": [{
-                    "id": "10001"
-                    , "username": "杜甫"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "男"
-                    , "city": "浙江杭州"
-                    , "sign": "点击此处，显示更多。当内容超出时，点击单元格会自动显示更多内容。"
-                    , "experience": "116"
-                    , "ip": "192.168.0.8"
-                    , "logins": "108"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10002"
-                    , "username": "李白"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "男"
-                    , "city": "浙江杭州"
-                    ,
-                    "sign": "君不见，黄河之水天上来，奔流到海不复回。 君不见，高堂明镜悲白发，朝如青丝暮成雪。 人生得意须尽欢，莫使金樽空对月。 天生我材必有用，千金散尽还复来。 烹羊宰牛且为乐，会须一饮三百杯。 岑夫子，丹丘生，将进酒，杯莫停。 与君歌一曲，请君为我倾耳听。(倾耳听 一作：侧耳听) 钟鼓馔玉不足贵，但愿长醉不复醒。(不足贵 一作：何足贵；不复醒 一作：不愿醒/不用醒) 古来圣贤皆寂寞，惟有饮者留其名。(古来 一作：自古；惟 通：唯) 陈王昔时宴平乐，斗酒十千恣欢谑。 主人何为言少钱，径须沽取对君酌。 五花马，千金裘，呼儿将出换美酒，与尔同销万古愁。"
-                    , "experience": "12.25"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10003"
-                    , "username": "王勃"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "男"
-                    , "city": "浙江杭州"
-                    , "sign": "人生恰似一场修行"
-                    , "experience": "65"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10004"
-                    , "username": "李清照"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "女"
-                    , "city": "浙江杭州"
-                    , "sign": "人生恰似一场修行"
-                    , "experience": "666"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10005"
-                    , "username": "冰心"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "女"
-                    , "city": "浙江杭州"
-                    , "sign": "人生恰似一场修行"
-                    , "experience": "86.05"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10006"
-                    , "username": "贤心"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "男"
-                    , "city": "浙江杭州"
-                    , "sign": "人生恰似一场修行"
-                    , "experience": "12"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10007"
-                    , "username": "贤心"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "男"
-                    , "city": "浙江杭州"
-                    , "sign": "人生恰似一场修行"
-                    , "experience": "16"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }, {
-                    "id": "10008"
-                    , "username": "贤心"
-                    , "email": "xianxin@layui.com"
-                    , "sex": "男"
-                    , "city": "浙江杭州"
-                    , "sign": "人生恰似一场修行"
-                    , "experience": "106"
-                    , "ip": "192.168.0.8"
-                    , "logins": "106"
-                    , "joinTime": "2016-10-14"
-                }]
-            }
-        }
-        return JsonResponse(data, safe=False)
+        # 获取到team_id
+        # print(self.POST.get('main_season'))
+        # print(self.POST.get('main_player'))
+        page = int(self.POST.get('page'))
+        limit = int(self.POST.get('limit'))
+        team_id = UserProfile.objects.get(user_id=self.user.id).team_id
+        player_data = list()
+        all_player = UserProfile.objects.filter(team_id=team_id, rights=4, role='球员',
+                                                id__contains=self.POST.get('main_player'),
+                                                name__contains=self.POST.get('main_title'))[
+                     limit * (page - 1):page * limit]
+        count = len(all_player)
+        # print(count)
+        """
+            这里返回数据和逻辑有点混乱，后期改进
+        """
+        try:
+            for i in all_player:
+                # 获取球队中的球员id
+                # print(i.id)
+                player = Player_season.objects.filter(player_id=i.id)
+                if self.POST.get('main_player') != '':
+                    player = Player_season.objects.filter(player_id=i.id,
+                                                          season_id__contains=self.POST.get('main_season'))
+                    for j in player:
+                        player_context = dict()
+                        player_context['id'] = j.id
+                        player_context['name'] = i.name
+                        player_context['score'] = j.score
+                        player_context['time'] = j.time
+                        player_context['shoot'] = str(j.shoot) + "-" + str(j.hit_shoot)
+                        player_context['hit'] = 0.0 if j.shoot == '0' else round(
+                            (int(j.hit_shoot) / int(j.shoot)) * 100, 2)
+                        player_context['three_points'] = str(j.three_points) + '-' + str(j.hit_points)
+                        player_context['three_hit'] = 0.0 if j.three_points == '0' else round(
+                            int(j.hit_points) / int(j.three_points) * 100, 2)
+                        player_context['free_throw'] = str(j.free_throw) + '-' + str(j.hit_throw)
+                        player_context['hit_throw'] = 0.0 if j.free_throw == '0' else round(
+                            int(j.hit_throw) / int(j.free_throw) * 100, 2)
+                        player_context['all_court'] = int(j.front_court) + int(j.back_court)
+                        player_context['front_court'] = j.front_court
+                        player_context['back_court'] = j.back_court
+                        player_context['assists'] = j.assists
+                        player_context['snatch'] = j.snatch
+                        player_context['block_shot'] = j.block_shot
+                        player_context['error'] = j.error
+                        player_context['break_rules'] = j.break_rules
+                        player_data.append(player_context)
+                        # print(player_context)
+                else:
+                    sum = Player_season.objects.filter(player_id=i.id,
+                                                       season_id__contains=self.POST.get('main_season')).aggregate(
+                        Avg('score'), Avg('time'), Sum('shoot'), Avg('shoot'), Avg('three_points'), Avg('free_throw'),
+                        Sum('hit_shoot'), Sum('three_points'), Sum('hit_points'), Sum('free_throw'), Sum('hit_throw'),
+                        Avg('front_court'), Avg('back_court'), Avg('assists'), Avg('snatch'), Avg('block_shot'),
+                        Avg('error'), Avg('break_rules'))
+                    # print(sum)
+                    # print(sum)
+                    player_context = dict()
+                    # 学生id
+                    player_context['id'] = i.id
+                    # 学生姓名
+                    player_context['name'] = i.name
+                    # 平均得分
+                    player_context['score'] = 0.0 if sum['score__avg'] is None else round(sum['score__avg'], 2)
+                    # 平均上场时间
+                    player_context['time'] = 0.0 if sum['time__avg'] is None else round(sum['time__avg'], 2)
+                    # 平均出手次数
+                    player_context['shoot'] = 0.0 if sum['shoot__avg'] is None else round(sum['shoot__avg'], 2)
+                    # 命中率
+                    player_context['hit'] = 0.0 if (
+                            (0 if sum['hit_shoot__sum'] is None else sum['hit_shoot__sum']) == 0) else round(
+                        (0 if sum['hit_shoot__sum'] is None else sum['hit_shoot__sum']) / (
+                            0 if sum['shoot__sum'] is None else sum['shoot__sum']) * 100, 2)
+                    # 三分出手次数
+                    player_context['three_points'] = 0.0 if sum['three_points__avg'] is None else round(
+                        sum['three_points__avg'], 2)
+                    # 三分命中率
+                    player_context['three_hit'] = 0.0 if (
+                            (0 if sum['hit_points__sum'] is None else sum['hit_points__sum']) == 0) else round(
+                        (0 if sum['hit_points__sum'] is None else sum['hit_points__sum']) / (
+                            0 if sum['three_points__sum'] is None else sum['three_points__sum']) * 100, 2)
+                    # 罚球次数
+                    player_context['free_throw'] = 0.0 if sum['free_throw__avg'] is None else round(
+                        sum['free_throw__avg'], 2)
+                    # 罚球命中率
+                    player_context['hit_throw'] = 0.0 if (
+                            (0 if sum['hit_throw__sum'] is None else sum['hit_throw__sum']) == 0) else round(
+                        (0 if sum['hit_throw__sum'] is None else sum['hit_throw__sum']) / (
+                            0 if sum['free_throw__sum'] is None else sum['free_throw__sum']) * 100, 2)
+                    # 平均篮板
+                    player_context['all_court'] = round(
+                        (0.0 if sum['front_court__avg'] is None else sum['front_court__avg']) + (
+                            0.0 if sum['back_court__avg'] is None else sum['back_court__avg']), 2)
+                    # 平均前场篮板
+                    player_context['front_court'] = 0.0 if sum['front_court__avg'] is None else round(
+                        sum['front_court__avg'], 2)
+                    # 平均后场篮板
+                    player_context['back_court'] = 0.0 if sum['back_court__avg'] is None else round(
+                        sum['back_court__avg'], 2)
+                    # 平均助攻数
+                    player_context['assists'] = 0.0 if sum['assists__avg'] is None else round(sum['assists__avg'], 2)
+                    # 平均盖帽
+                    player_context['snatch'] = 0.0 if sum['snatch__avg'] is None else round(sum['snatch__avg'], 2)
+                    # 平均抢断
+                    player_context['block_shot'] = 0.0 if sum['block_shot__avg'] is None else round(
+                        sum['block_shot__avg'], 2)
+                    # 平均失误
+                    player_context['error'] = 0.0 if sum['error__avg'] is None else round(sum['error__avg'], 2)
+                    # 平均犯规
+                    player_context['break_rules'] = 0.0 if sum['break_rules__avg'] is None else round(
+                        sum['break_rules__avg'], 2)
+                    print(player_context)
+                    player_data.append(player_context)
+            return JsonResponse(Msg().Success(date=player_data, count=count), safe=False)
+        except Exception:
+            return JsonResponse(Msg().Error(), safe=False)
+    # 比较两个球队的得分，然后得出结果
+    def Judge(self, one_score, two_score, one_id, two_id, you_id):
+        if one_score > two_score:
+            if one_id == you_id:
+                return "胜利"
+            else:
+                return "失败"
+        elif one_score < two_score:
+            if two_id == you_id:
+                return "胜利"
+            else:
+                return "失败"
+        else:
+            return "平局"
+
+    @csrf_exempt
+    def Show_teamrecord(self):
+        page = self.POST.get('page')
+        limit = self.POST.get('limit')
+        team_id = UserProfile.objects.get(user_id=self.user.id).team_id
+        # 查询该赛季下的赛程
+        all_data = Player_season.objects.filter(team_id=team_id, season_id=1)
+        all_schedule = Schedule.objects.filter(Q(team_one=team_id) | Q(team_two=team_id), season_id=1)
+        data = list()
+        for i in all_schedule:
+            # all_schedule = Schedule.objects.get(id=i.schedule_id)
+            context = dict()
+            context['id'] = i.id
+            # 第一个球队
+            one_id = Team.objects.get(id=i.team_one).id
+            context['team_one'] = Team.objects.get(id=i.team_one).name
+            # 球队的图片
+            context['team_onepic'] = Team.objects.get(id=i.team_one).team_pic
+            # 球场
+            context['team_area'] = Team.objects.get(id=i.team_one).aarea
+            # 第二个球队
+            two_id = Team.objects.get(id=i.team_two).id
+            context['team_two'] = Team.objects.get(id=i.team_two).name
+            # 第二个球队的图片
+            context['team_twopic'] = Team.objects.get(id=i.team_two).team_pic
+            # 类型
+            context['type'] = Schedule.objects.get(id=i.id).type
+            # 获取开赛时间
+            context['time'] = Schedule.objects.get(id=i.id).time.strftime('%Y-%m-%d %H:%M:%S')
+            # 第一个球队的得分
+            one_score = Player_season.objects.filter(schedule_id=i.id, team_id=Team.objects.get(id=i.team_one).id).aggregate(Sum('score'))['score__sum']
+            context['one_score'] = 0.0 if one_score is None else one_score
+            # 第二个球队的得分
+            two_score = Player_season.objects.filter(schedule_id=i.id, team_id=Team.objects.get(id=i.team_two).id).aggregate(Sum('score'))['score__sum']
+            context['two_score'] = 0.0 if two_score is None else two_score
+            # 结果
+            context['result'] = Record().Judge(context['one_score'], context['two_score'], one_id, two_id, team_id)
+            data.append(context)
+            print(context)
+        return JsonResponse(Msg().Success(data), safe=False)

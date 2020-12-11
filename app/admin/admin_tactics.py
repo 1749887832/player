@@ -71,9 +71,9 @@ class P_Tactics:
                 context['update_user'] = UserProfile.objects.filter(user_id=i.update_uer)[0].name
                 data.append(context)
             # print(data)
+            return JsonResponse(Msg().Success(date=data, count=count), safe=False)
         except Exception:
             return JsonResponse(Msg().Error('查询失败'), safe=False)
-        return JsonResponse(Msg().Success(date=data, count=count), safe=False)
 
     # 跳转到新建战术页面
     def Create_tatics(self):
