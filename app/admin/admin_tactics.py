@@ -51,8 +51,9 @@ class P_Tactics:
         try:
             user = UserProfile.objects.get(user_id=self.user.id)
             team_id = user.team_id
-            tactics = Tactics.objects.filter(team_id=team_id, title__contains=title, main_player__contains=main_player,
-                                             start_player__contains=start_player, end_player__contains=end_player,
+            tactics = Tactics.objects.filter(team_id=team_id, title__icontains=title,
+                                             main_player__icontains=main_player,
+                                             start_player__icontains=start_player, end_player__icontains=end_player,
                                              create_time__range=[start_time, end_time])[
                       limit * (page - 1):page * limit]
             count = len(Tactics.objects.filter(team_id=team_id))

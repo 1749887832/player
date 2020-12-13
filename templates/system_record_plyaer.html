@@ -23,11 +23,11 @@
         </div>
     </div>
     <i class="layui-btn layui-btn-primary layui-icon layui-icon-search"
-       style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="select"></i>
-    <button class="layui-btn layui-btn-primary" style="margin-top: -5px" id="chong">重置</button>
+       style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="select_data"></i>
+    <p class="layui-btn layui-btn-primary" style="margin-top: -5px" id="chong">重置</p>
     <br>
     <div class="layui-inline">
-        <label class="layui-form-label" style="width: 100px">赛季</label>
+        <label class="layui-form-label" style="width: 100px">赛&nbsp;&nbsp;&nbsp;&nbsp;季</label>
         <div class="layui-input-inline">
             <select name="modules" lay-verify="required" lay-filter="all_player" lay-search="all_player"
                     id="main_season">
@@ -36,7 +36,7 @@
         </div>
     </div>
     <div class="layui-inline">
-        <label class="layui-form-label" style="width: 100px">球员</label>
+        <label class="layui-form-label" style="width: 100px">球&nbsp;&nbsp;&nbsp;&nbsp;员</label>
         <div class="layui-input-inline">
             <select name="modules" lay-verify="required" lay-filter="all_player" lay-search="all_player"
                     id="main_player">
@@ -214,6 +214,13 @@
         $('.create_season').css('display', 'none');
     }
 
+    $('#chong').click(function () {
+        document.getElementById('main_title').value = '';
+        document.getElementById('main_season').value = '';
+        document.getElementById('main_player').value = '';
+        renderForm();
+        get_data()
+    });
     {# 这里是正则匹配输入投篮类型的规则 #}
     $(document).ready(function () {
         $.ajax({
@@ -236,6 +243,26 @@
             }
         });
         $.ajax({
+           async: true,
+            url: '/player/select_team/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                {#console.log(date)#}
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    {#console.log(item.name);#}
+                    var option = "<option value=" + item.id + ">" + item.name + "</option>";
+                    $("#all_team").append(option);
+                    renderForm();
+                });
+            },
+            error: function (msg) {
+                layer.msg('接口报错')
+            }
+        });
+        $.ajax({
             async: true,
             url: '/player/select_season/',
             type: 'post',
@@ -249,6 +276,7 @@
                     var option = "<option value=" + item.id + ">" + item.name + "</option>";
                     $("#season").append(option);
                     $("#main_season").append(option);
+                    $("#all_season").append(option);
                     renderForm();
                 });
             },
@@ -325,34 +353,48 @@
                     }
                 })
             }
-        })
+        });
         form.on('select(all_player)', function () {
-            const th = document.getElementsByTagName('th')
-            const td = document.getElementsByTagName('td')
-            for (let i = 0; i < th.length; i++) {
-                if (th[i].getAttribute('data-field') === 'battle') {
-                    th[i].style.display = data.value == 1 ? 'none' : 'table-cell'
-                }
-            }
-
-            for (let i = 0; i < td.length; i++) {
-                if (td[i].getAttribute('data-field') === 'battle') {
-                    td[i].style.display = data.value == 1 ? 'none' : 'table-cell'
-                }
-            }
             get_data();
+        });
+        form.on('select(all_team)',function () {
+            get_teamdata()
         })
     });
-    $('#select').click(function () {
+    $('#select_data').click(function () {
         get_data();
-    })
-
+    });
+    $('#select_teamdata').click(function () {
+        get_teamdata()
+    });
+    function get_teamdata() {
+        var team_title = document.getElementById('team_title').value;
+        var all_team = document.getElementById('all_team').value;
+        var all_season = document.getElementById('all_season').value;
+        var all_type = document.getElementById('all_type').value;
+        var table = layui.table;
+        table.reload('team',{
+            where:{
+                'team_title': team_title,
+                'all_team': all_team,
+                'all_season': all_season,
+                'all_type': all_type,
+            },page:{
+                curr:1
+            }
+        },'data')
+    }
     function get_data() {
         var main_title = document.getElementById('main_title').value;
         var main_season = document.getElementById('main_season').value;
         var main_player = document.getElementById('main_player').value;
         var table = layui.table;
         table.reload('test', {
+            cols: [[
+                {field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '汇总'}
+                , {field: 'name', title: '名字', width: 120}
+                , {field: 'battle', title: '赛程', width: 220, hide: main_player === ''}
+            ]],
             where: {
                 'main_title': main_title,
                 'main_season': main_season,
@@ -437,7 +479,7 @@
             , cols: [[
                 {field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true, totalRowText: '汇总'}
                 , {field: 'name', title: '名字', width: 120}
-                , {field: 'battle', title: '赛程', width: 150, hide: true}
+                , {field: 'battle', title: '赛程', width: 220, hide: true}
                 , {field: 'score', title: '得分', width: 80, sort: true, totalRow: true}
                 , {field: 'time', title: '时间', width: 80, sort: true, totalRow: true}
                 , {field: 'shoot', title: '出手次数', width: 120, sort: true, totalRow: true}
@@ -480,11 +522,21 @@
                 };
             }
         });
+        var team_title = document.getElementById('team_title').value;
+        var all_team = document.getElementById('all_team').value;
+        var all_season = document.getElementById('all_season').value;
+        var all_type = document.getElementById('all_type').value;
         table.render({
             elem: '#team'
             , url: '/player/show_teamrecord/'
             , toolbar: true
             , title: '用户数据表'
+            , where:{
+                'team_title': team_title,
+                'all_team': all_team,
+                'all_season': all_season,
+                'all_type': all_type,
+            }
             , defaultToolbar: []
             , method: 'post'
             , cols: [[
@@ -494,20 +546,91 @@
                 , {field: 'team_area', title: '球馆', width: 160}
                 , {
                     field: 'team_one', title: '主场球队', width: 220, templet: function (data) {
-                        return '<img src=http://127.0.0.1:8000/static/' + data.team_onepic + '/>' + '<span>' + data.team_one + '</span>'
+                        return '</p><img style="height:20px;width:20px;border-radius:20px;margin-top:-3px;margin-right:3px" src=http://127.0.0.1:8000/static/' + data.team_onepic + '/>' + '<span>' + data.team_one + '</span></p>'
                     }
                 }
                 , {
-                    field: 'one_score', title: '比分', width: 180, templet: function (data) {
+                    field: 'one_score', title: '比分', width: 150, templet: function (data) {
                         return data.one_score + '—' + data.two_score
                     }
                 }
-                , {field: 'team_two', title: '客场球队', width: 220}
+                , {
+                    field: 'team_two', title: '客场球队', width: 220, templet: function (data) {
+                        return '</p><img style="height:20px;width:20px;border-radius:20px;margin-top:-3px;margin-right:3px" src=http://127.0.0.1:8000/static/' + data.team_twopic + '/>' + '<span>' + data.team_two + '</span></p>'
+                    }
+                }
                 , {field: 'result', title: '结果', width: 120}
                 , {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
             ]]
             , page: true
         });
+        table.on('tool(team)', function (obj) {
+            var data = obj.data.id;
+            if (obj.event === 'details') {
+                $.ajax({
+                    async: true,
+                    url: '/player/team_contrast/',
+                    type: 'post',
+                    headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                    data: {
+                        'schedule_id': data
+                    },
+                    success: function (success) {
+                        console.log(success['data'][0]);
+                        document.getElementById('team_onename').innerHTML = obj.data.team_one;
+                        document.getElementById('tean_twoname').innerHTML = obj.data.team_two;
+                        const text = document.getElementById('text').getElementsByTagName('ul')[0];
+                        const maps = ['得分', '出手数','命中率', '三个出手', '三分命中率','罚球得分','罚球命中率','篮板','前场篮板','后场篮板','助攻','盖帽','抢断','失误','犯规'];
+                        const result = maps.map(i => `<li>${i}</li>`).join('');
+                        text.innerHTML = result;
+                        const right = document.getElementById('right');
+                        const maps2 = success['data'][1];
+                        function insertStyleSheetRule(ruleText) {
+                            let sheets = document.styleSheets;
+                            if (sheets.length == 0) {
+                                let style = document.createElement('style');
+                                style.appendChild(document.createTextNode(""));
+                                document.head.appendChild(style);
+                            }
+                            let sheet = sheets[sheets.length - 1];
+                            sheet.insertRule(ruleText, sheet.rules ? sheet.rules.length : sheet.cssRules.length);
+                        }
+                        insertStyleSheetRule("@keyframes s { 0% { width: 0 } }");
+                        insertStyleSheetRule("dt" + "{ " +
+                            "animation: s 1s ease-in-out" +
+                            "}");
+                        const result2 = maps2.map(({value, percent}) => `
+      <dl style="margin: 8px 0; display: flex">
+        <dt title="${percent}" class="right" style="width: ${percent}; background-color: pink; height: 20px; margin-right: 12px;"></dt>
+        </dd>${value}</dd>
+      </dl>`
+                        ).join('');
+                        right.innerHTML = result2;
+                        const left = document.getElementById('left');
+                        const maps3 = success['data'][0];
+                        const result3 = maps3.map(({value, percent}) => `
+      <dl style="margin: 8px 0; display: flex; justify-content: flex-end;">
+        <dd>${value}</dd>
+        <dt style="width: ${percent}; background-color: skyblue; height: 20px; margin-left: 12px"></dt>
+      </dl>`
+                        ).join('');
+                        left.innerHTML = result3;
+                        hsycms.confirm('confirm_sx', '数据对比详情',
+                            function () {
+
+                            }, function () {
+
+                            })
+                    },
+                    error: function (error) {
+                        layer.msg('接口访问失败')
+                    }
+                })
+            }
+        });
+    });
+    $('#colse_contrast').click(function () {
+        hsycms.close('confirm_sx')
     });
 </script>
 </body>

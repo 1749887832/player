@@ -26,6 +26,15 @@
             if(url === 'record'){
                 $($li[5]).addClass('active').siblings().removeClass('active')
             }
+            if (url === 'command'){
+                $($li[6]).addClass('active').siblings().removeClass('active')
+            }
+            if (url === 'finance'){
+                $($li[7]).addClass('active').siblings().removeClass('active')
+            }
+            if (url === 'setting'){
+                $($li[8]).addClass('active').siblings().removeClass('active')
+            }
         })
     </script>
 </head>
@@ -42,9 +51,9 @@
                 <li><a href="/player/showall/"><span class="glyphicon glyphicon-star-empty"></span> 我的团队</a></li>
                 <li><a href="/player/tactics/"><span class="glyphicon glyphicon-th"></span> 战术管理</a></li>
                 <li><a href="/player/record/"><span class="glyphicon glyphicon-exclamation-sign"></span> 数据中心</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-magnet"></span> 命令中心</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-folder-close"></span> 财务管理</a></li>
-                <li><a href="#"><span class="glyphicon glyphicon-cog"></span> 系统设置</a></li>
+                <li><a href="/player/command/"><span class="glyphicon glyphicon-magnet"></span> 命令中心</a></li>
+                <li><a href="/player/finance/"><span class="glyphicon glyphicon-folder-close"></span> 财务管理</a></li>
+                <li><a href="/player/setting/"><span class="glyphicon glyphicon-cog"></span> 系统设置</a></li>
             </ul>
         </div>
     </div>

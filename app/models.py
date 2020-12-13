@@ -191,6 +191,8 @@ class Player_season(models.Model):
     free_throw = models.CharField(max_length=32, null=True)
     # 命中罚球数
     hit_throw = models.CharField(max_length=32, null=True)
+    # 总篮板数
+    all_court = models.CharField(max_length=32, null=True)
     # 前场篮板
     front_court = models.CharField(max_length=32, null=True)
     # 后场篮板

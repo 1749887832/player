@@ -17,40 +17,70 @@
     <div class="layui-inline">
         <label class="layui-form-label" style="width: 100px">球员名称</label>
         <div class="layui-input-block">
-            <input type="text" name="main_title" id="" lay-verify="title" autocomplete="off"
+            <input type="text" name="" id="team_title" lay-verify="title" autocomplete="off"
                    placeholder="请输入名称"
                    class="layui-input" style="width: 300px;margin-left: -10px">
         </div>
     </div>
     <i class="layui-btn layui-btn-primary layui-icon layui-icon-search"
-       style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="select"></i>
-    <button class="layui-btn layui-btn-primary" style="margin-top: -5px" id="">重置</button>
+       style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="select_teamdata"></i>
+    <button class="layui-btn layui-btn-primary" style="margin-top: -5px">重置</button>
     <br>
     <div class="layui-inline">
-        <label class="layui-form-label" style="width: 100px">赛季</label>
+        <label class="layui-form-label" style="width: 100px">赛&nbsp;&nbsp;&nbsp;&nbsp;季</label>
         <div class="layui-input-inline">
-            <select name="modules" lay-verify="required" lay-filter="all_player" lay-search="all_player"
-                    id="">
+            <select name="modules" lay-verify="required" lay-filter="all_team" lay-search="all_team"
+                    id="all_season">
                 <option value="">请选择赛季</option>
             </select>
         </div>
     </div>
     <div class="layui-inline">
-        <label class="layui-form-label" style="width: 100px">球员</label>
+        <label class="layui-form-label" style="width: 100px">球&nbsp;&nbsp;&nbsp;&nbsp;队</label>
         <div class="layui-input-inline">
-            <select name="modules" lay-verify="required" lay-filter="all_player" lay-search="all_player"
-                    id="">
-                <option value="">请选择球员</option>
+            <select name="modules" lay-verify="required" lay-filter="all_team" lay-search="all_team"
+                    id="all_team">
+                <option value="">请选择球队</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label" style="width: 100px">类&nbsp;&nbsp;&nbsp;&nbsp;型</label>
+        <div class="layui-input-inline">
+            <select name="modules" lay-verify="required" lay-filter="all_team" lay-search="all_team"
+                    id="all_type">
+                <option value="">请选择比赛类型</option>
+                <option value="季前赛">季前赛</option>
+                <option value="常规赛">常规赛</option>
+                <option value="季后赛">季后赛</option>
             </select>
         </div>
     </div>
 </form>
 <table class="layui-hide" id="team" lay-filter="team"></table>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="edit">查看详情</a>
+    <a class="layui-btn layui-btn-xs" lay-event="details">数据详情</a>
 </script>
-<script>
-</script>
-
+<div class="contrast">
+    <div class="hsycms-model-mask" id="mask-confirm_sx"></div>
+    <div class="hsycms-model hsycms-model-confirm_sx" id="confirm_sx" style="width: 900px;height: 600px">
+        <div class="hscysm-model-title" style="height: 40px;background-color: #2e3338;padding: 0">
+            <p>数据详情</p>
+            <p class="layui-icon layui-icon-close-fill" id="colse_contrast"></p>
+        </div>
+        <div id="team_name">
+            <p id="team_onename"></p>
+            <p id="tean_twoname"></p>
+        </div>
+        <div id="app">
+            <div id="left"></div>
+            <div id="text">
+                <ul></ul>
+            </div>
+            <div id="right">
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

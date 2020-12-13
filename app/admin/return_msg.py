@@ -26,3 +26,15 @@ class Msg:
             return msg
         else:
             return str(the_two) + '-' + str(the_one)
+
+    def ReturnNone(self, data):
+        if data is None or 0:
+            return 0.0
+        else:
+            return data
+
+    def Count_pro(self, left, right):
+        if left == 0.0 and right == 0.0:
+            return 0
+        else:
+            return round((left / (left + right)) * 100, 2)

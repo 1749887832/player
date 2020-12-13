@@ -22,6 +22,9 @@ import app.admin.admin_addplayer as Add
 import app.admin.admin_showall as Show
 import app.admin.admin_record as Re
 import app.admin.admin_tactics as Ta
+import app.admin.admin_command as Com
+import app.admin.admin_finance as Fina
+import app.admin.admin_setting as Set
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -94,7 +97,7 @@ urlpatterns = [
     path('player/record_player/', Re.Record.Record_show),
     # 查询赛季模块
     path('player/select_season/', Re.Record.Select_season),
-    # 查询赛程模块
+    # 查询球员模块
     path('player/select_players/', Re.Record.Select_players),
     # 查询赛程模块
     path('player/player_schedule/', Re.Record.Select_schedule),
@@ -102,4 +105,17 @@ urlpatterns = [
     path('player/add_playerdata/', Re.Record.Add_playerdata),
     # 显示球队数据
     path('player/show_teamrecord/', Re.Record.Show_teamrecord),
+    # 球队数据对比
+    path('player/team_contrast/', Re.Record.Team_contrast),
+    # 查询所有球队
+    path('player/select_team/', Re.Record.Select_team),
+
+    # 打开球员命令中心
+    path('player/command/',Com.Command.Show_command),
+
+    # 打开财务管理
+    path('player/finance/',Fina.Finance.Show_finance),
+
+    # 打开设置中心
+    path('player/setting/',Set.Setting.Show_setting),
 ]
