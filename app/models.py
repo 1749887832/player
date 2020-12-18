@@ -215,3 +215,25 @@ class Player_season(models.Model):
     schedule_id = models.IntegerField(null=False)
     # 球队id
     team_id = models.IntegerField(null=False)
+
+
+class TeamSet(models.Model):
+    id = models.AutoField(primary_key=True)
+    # 当期赛季
+    nowseason = models.CharField(max_length=32, null=True)
+    # 球队控球后卫
+    pg = models.CharField(max_length=32, null=True)
+    # 得分后卫
+    sg = models.CharField(max_length=32, null=True)
+    # 小前锋
+    sf = models.CharField(max_length=32, null=True)
+    # 大前锋
+    pf = models.CharField(max_length=32, null=True)
+    # 中锋
+    c = models.CharField(max_length=32, null=True)
+    # 工资帽
+    money = models.CharField(max_length=32, null=True)
+    # 最高工资帽
+    max_money = models.CharField(max_length=32, null=True)
+    # 球队id
+    team_id = models.IntegerField(null=False)

@@ -9,12 +9,356 @@
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
     <script src="{% static 'js/jQuery-3.5.1-min.js' %}"></script>
+    <script src="{% static 'js/jquery.cookie.js' %}"></script>
     <script src="{% static 'layui/layui.js' %}"></script>
+    <script src="{% static 'js/hsycmsAlert.js' %}"></script>
 </head>
 <body>
 {% include 'system_index.html' %}
 <div class="body">
-    这里是设置中心
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>系统基础参数设置</legend>
+    </fieldset>
+    <div class="layui-collapse" lay-accordion="">
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">赛季基础参数设置</h2>
+            <div class="layui-colla-content layui-show">
+                <table id="set_season" lay-filter="tool_season"></table>
+                <script type="text/html" id="season_tool">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit_season">设为当期赛季</a>
+                </script>
+            </div>
+        </div>
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">赛季薪资设置</h2>
+            <div class="layui-colla-content">
+                <div class="money">
+                    <ul>
+                        <li>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="width: 100px">赛季工资帽</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="title" required lay-verify="required"
+                                           placeholder="请输入赛季工资帽" id="money"
+                                           autocomplete="off" class="layui-input" disabled
+                                           onblur="if (value<=0){value=0}else{value=Math.floor(value)}">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" style="width: 100px">最高奢侈税</label>
+                                <div class="layui-input-block">
+                                    <input type="number" name="title" required lay-verify="required"
+                                           placeholder="请输入最高奢侈税" id="max_money"
+                                           autocomplete="off" class="layui-input" disabled
+                                           onblur="if (value<=0){value=0}else{value=Math.floor(value)}">
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <button type="button" class="layui-btn" style="float:right;" id="money_set">编辑</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">球队首发设置</h2>
+            <div class="layui-colla-content">
+                <table id="demo" lay-filter="test"></table>
+                <script type="text/html" id="barDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">移除</a>
+                </script>
+            </div>
+        </div>
+        <div class="layui-colla-item">
+            <h2 class="layui-colla-title">球队设置</h2>
+            <div class="layui-colla-content">
+                <p>球队设置，待开发</p>
+            </div>
+        </div>
+    </div>
 </div>
+<div class="hsycms-model-mask" id="mask-confirm"></div>
+<div class="hsycms-model hsycms-model-confirm" id="confirm">
+    <div class="hscysm-model-title">系统提示</div>
+    <div class="hsycms-model-text"></div>
+    <div class="hsycms-model-btn">
+        <button type="button" class="cancel">取消</button>
+        <button type="button" class="ok">确定</button>
+    </div>
+</div>
+<div class="hsycms-model-mask" id="mask-confirm_role"></div>
+<div class="hsycms-model hsycms-model-confirm" id="confirm_role" style="width: 400px;height: 300px">
+    <div class="hscysm-model-title" style="height: 40px;background-color: #2e3338;padding: 0">
+        <p>选择赛季</p>
+        <p class="layui-icon layui-icon-close-fill" id="close" style="margin-top: 0"></p>
+    </div>
+    <div class="open_context">
+        <p><span class="layui-icon layui-icon-about"></span>请选择首发球员</p>
+        <div class="layui-form-item" style="width: 360px">
+            <form class="layui-form layui-form-pane" action="">
+                <select name="saiji" lay-verify="" id="the_player">
+                    <option value="">请选择一个球员</option>
+                </select>
+            </form>
+        </div>
+    </div>
+    {#    <div class="hsycms-model-btn">#}
+    {#        <button type="button" class="cancel">取消</button>#}
+    {#        <button type="button" class="ok">确定</button>#}
+    {#    </div>#}
+    <div style="display: flex;align-items: center;justify-content: center;">
+        <button type="button" class="layui-btn" style="width: 100%;margin-top: 2px" id="update_setplayer">确定</button>
+    </div>
+</div>
+<script>
+    $('#close').click(function () {
+        hsycms.close('confirm_role')
+    });
+    var update_setpostion;
+
+    function renderForm() {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
+    }
+
+    $(document).ready(function () {
+        $.ajax({
+            async: true,
+            url: '/player/setting_money/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: {},
+            success: function (success) {
+                document.getElementById('money').value = success['data'][0]['money']
+                document.getElementById('max_money').value = success['data'][0]['max_money']
+            },
+            error: function (error) {
+            }
+        });
+        $.ajax({
+            async: true,
+            url: '/player/select_player/',
+            type: 'post',
+            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+            data: [],
+            success: function (date) {
+                {#console.log(date)#}
+                jsonDate = JSON.stringify(date['data']);
+                $.each(JSON.parse(jsonDate), function (i, item) {
+                    {#console.log(item.name);#}
+                    var option = "<option value=" + item.id + ">" + item.name + '(' + item.postion + ')' + "</option>";
+                    $("#the_player").append(option);
+                    renderForm();
+                });
+            },
+            error: function (msg) {
+                layer.msg('接口报错')
+            }
+        });
+    })
+    layui.use('table', function () {
+        var table = layui.table
+        $('#update_setplayer').click(function () {
+            var player_id = document.getElementById('the_player').value;
+            $.ajax({
+                async: true,
+                url: '/player/update_setplayers/',
+                headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                type: 'post',
+                data: {
+                    'postion': update_setpostion,
+                    'player_id': player_id
+                },
+                success: function (date) {
+                    table.reload('demo', {
+                        where: {
+                            url: '/player/setting_roles/'
+                        }
+                    }, 'data');
+                    layer.msg('修改成功')
+
+                },
+                error: function () {
+                    layer.msg('修改失败')
+                }
+            });
+            hsycms.close('confirm_role');
+        });
+        table.render({
+            elem: '#set_season'
+            , height: 300
+            , url: '/player/setting_season/' //数据接口
+            , method: 'post'
+            , cols: [[ //表头
+                {field: 'id', title: 'ID', width: 100, fixed: 'left'}
+                , {
+                    field: 'name', title: '赛季名称', width: '81.4%', templet: function (date) {
+                        if (date.is_now === 'true') {
+                            return '<p><span class="layui-badge layui-bg-green">当期</span>' + date.name + '</p>'
+                        } else {
+                            return date.name
+                        }
+                    }
+                }
+                , {
+                    fixed: 'right', title: '操作', width: 160, align: 'center', templet: (d) => {
+                        return `<a class="layui-btn layui-btn-xs ${d.is_now === 'true' && 'layui-disabled'}" lay-event="edit_season">设为当期赛季</a>`
+                    }
+                }
+            ]]
+        });
+        table.on('tool(tool_season)', function (obj) {
+            var season_id = obj.data.id;
+            if (obj.event === 'edit_season') {
+                if (obj.data.is_now === 'true') return
+                hsycms.confirm('confirm', '确定将该赛季设置为当前赛季吗',
+                    function () {
+                        $.ajax({
+                            async: true,
+                            url: '/player/set_nowseaon/',
+                            type: 'post',
+                            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                            data: {
+                                'season_id': season_id
+                            },
+                            success: function (success) {
+                                table.reload('set_season', {
+                                    where: {
+                                        url: '/player/setting_season/'
+                                    }
+                                }, 'data');
+                                layer.msg('修改成功')
+                            },
+                            error: function (error) {
+                                layer.msg('请求错误')
+                            }
+                        })
+                    },
+                    function (res) {
+
+                    })
+            }
+        })
+        table.render({
+            elem: '#demo'
+            , height: 290
+            , url: '/player/setting_roles/' //数据接口
+            , method: 'post'
+            , totalRow: true
+            , cols: [[ //表头
+                {field: 'postion', title: '位置', width: 180, fixed: 'left', unresize: true, totalRowText: '汇总'}
+                , {field: 'id', title: 'ID', width: 80}
+                , {field: 'name', title: '姓名', width: 180}
+                , {field: 'age', title: '年龄', width: 80}
+                , {field: 'rolepostion', title: '球员擅长位置',}
+                , {field: 'time', title: '时间', width: 100, totalRow: true}
+                , {field: 'score', title: '得分', width: 100, totalRow: true}
+                , {field: 'assists', title: '助攻', width: 100, totalRow: true}
+                , {field: 'court', title: '篮板', width: 100, totalRow: true}
+                , {field: 'snatch', title: '抢断', width: 100, totalRow: true}
+                , {field: 'block_shot', title: '盖帽', width: 100, totalRow: true}
+                , {fixed: 'right', title: '操作',  width: 140, templet: (d) => {
+                        return `<a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+<a class="layui-btn layui-btn-danger layui-btn-xs ${d.id === undefined && 'layui-disabled'}" lay-event="del">移除</a>`
+                    }}
+            ]]
+        });
+        table.on('tool(test)', function (obj) {
+            var udpate_setid = obj.data.setid;
+            update_setpostion = obj.data.postion
+            if (obj.event === 'del') {
+                if (obj.data.id === undefined) return
+                hsycms.confirm('confirm', '确定移除该首发吗',
+                    function () {
+                        $.ajax({
+                            async: true,
+                            url: '/player/remvo_setrule/',
+                            type: 'post',
+                            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                            data: {
+                                'setid': udpate_setid
+                            },
+                            success: function (success) {
+                                table.reload('demo', {
+                                    where: {
+                                        url: '/player/remvo_setrule/'
+                                    }
+                                }, 'data');
+                                layer.msg('移除成功')
+                            },
+                            error: function (error) {
+                                tips(JSON.stringify(error['msg']))
+                            }
+                        })
+                    },
+                    function (res) {
+
+                    })
+            } else {
+                hsycms.confirm('confirm_role', function () {
+
+                }, function () {
+
+                });
+
+            }
+        })
+    });
+    $('#money_set').click(function () {
+        let money_button = document.getElementById('money_set').innerText;
+        if (money_button === '编辑') {
+            $('.money input').attr('disabled', false);
+            document.getElementById('money_set').innerText = '保存'
+        }
+        if (money_button === '保存') {
+            hsycms.confirm('confirm', '是否保存数据？',
+                function () {
+                    money = document.getElementById('money').value;
+                    max_money = document.getElementById('max_money').value;
+                    if (Number(money) > Number(max_money)) {
+                        layer.msg('最高奢侈税不能低于赛季工资帽')
+                        return false
+                    } else {
+                        $.ajax({
+                            async: true,
+                            url: '/player/update_setmoney/',
+                            type: 'post',
+                            headers: {"X-CSRFToken": $.cookie("csrftoken")},
+                            data: {
+                                'money': money,
+                                'max_money': max_money
+                            },
+                            success: function (success) {
+                                layer.msg('修改成功')
+                                $('.money input').attr('disabled', true);
+                                document.getElementById('money_set').innerText = '编辑'
+                            },
+                            error: function (error) {
+                                layer.msg('接口错误')
+                            }
+                        })
+                    }
+                }, function (res) {
+
+                });
+
+        }
+    });
+    layui.use(['element', 'layer'], function () {
+        var element = layui.element;
+        var layer = layui.layer;
+
+        //监听折叠
+        element.on('collapse(test)', function (data) {
+            layer.msg('展开状态：' + data.show);
+        });
+    });
+</script>
 </body>
 </html>

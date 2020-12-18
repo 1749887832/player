@@ -111,11 +111,28 @@ urlpatterns = [
     path('player/select_team/', Re.Record.Select_team),
 
     # 打开球员命令中心
-    path('player/command/',Com.Command.Show_command),
-
+    path('player/command/', Com.Command.Show_command),
+    # 查询所有的命令
+    path('player/show_command/', Com.Command.Show_all),
+    # 新建命令
+    path('player/create_command/', Com.Command.C_command),
     # 打开财务管理
-    path('player/finance/',Fina.Finance.Show_finance),
+    path('player/finance/', Fina.Finance.Show_finance),
 
     # 打开设置中心
-    path('player/setting/',Set.Setting.Show_setting),
+    path('player/setting/', Set.Setting.Show_setting),
+    # 显示设置中心的薪资
+    path('player/setting_money/', Set.Setting.Show_money),
+    # 修改薪资设置
+    path('player/update_setmoney/', Set.Setting.Update_money),
+    # 显示设置中心的首发角色
+    path('player/setting_roles/', Set.Setting.Show_roles),
+    # 移除首发
+    path('player/remvo_setrule/', Set.Setting.Del_roles),
+    # 显示所有赛季
+    path('player/setting_season/', Set.Setting.Show_season),
+    # 设置当期赛季
+    path('player/set_nowseaon/', Set.Setting.Set_nowseason),
+    # 修改首发球员
+    path('player/update_setplayers/', Set.Setting.Update_setplayers),
 ]

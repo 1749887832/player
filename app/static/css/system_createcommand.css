@@ -13,3 +13,6 @@
     overflow: auto;
     /*background-image: url("../images/gblogin2.jpg");*/
 }
+body .layui-form-checkbox i{
+    height: 30px;
+}

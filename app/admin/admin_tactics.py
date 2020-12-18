@@ -111,6 +111,7 @@ class P_Tactics:
                 context = dict()
                 context['id'] = i.id
                 context['name'] = i.name
+                context['postion'] = Player_Basic.objects.get(user_id=UserProfile.objects.get(id=i.id).id).position
                 data.append(context)
             # print(data)
             return JsonResponse(Msg().Success(data), safe=False)
