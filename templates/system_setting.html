@@ -93,7 +93,7 @@
 <div class="hsycms-model-mask" id="mask-confirm_role"></div>
 <div class="hsycms-model hsycms-model-confirm" id="confirm_role" style="width: 400px;height: 300px">
     <div class="hscysm-model-title" style="height: 40px;background-color: #2e3338;padding: 0">
-        <p>选择赛季</p>
+        <p>选择首发球员</p>
         <p class="layui-icon layui-icon-close-fill" id="close" style="margin-top: 0"></p>
     </div>
     <div class="open_context">
@@ -216,7 +216,7 @@
         table.on('tool(tool_season)', function (obj) {
             var season_id = obj.data.id;
             if (obj.event === 'edit_season') {
-                if (obj.data.is_now === 'true') return
+                if (obj.data.is_now === 'true') return;
                 hsycms.confirm('confirm', '确定将该赛季设置为当前赛季吗',
                     function () {
                         $.ajax({

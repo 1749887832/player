@@ -68,9 +68,9 @@ class Setting:
         msg_date = ['控球后卫', '得分后卫', '小前锋', '大前锋', '中锋']
         try:
             if len(data) == 0:
-                context = dict()
-                for i in msg:
-                    context['postion'] = msg_date[msg.index(i)]
+                for i in msg_date:
+                    context = dict()
+                    context['postion'] = i
                     date.append(context)
                 return JsonResponse(Msg().Success(date=date), safe=False)
             else:
@@ -93,13 +93,21 @@ class Setting:
                         content['id'] = UserProfile.objects.get(id=a).id
                         content['name'] = UserProfile.objects.get(id=a).name
                         content['age'] = UserProfile.objects.get(id=a).age
-                        content['rolepostion'] = Player_Basic.objects.get(user_id=UserProfile.objects.get(id=a).id).position
-                        content['time'] = round(Msg().ReturnNone(Player_season.objects.filter(player_id=a).aggregate(Avg('time'))['time__avg']), 2)
-                        content['score'] = round(Msg().ReturnNone(Player_season.objects.filter(player_id=a).aggregate(Avg('score'))['score__avg']), 2)
-                        content['assists'] = round(Msg().ReturnNone(Player_season.objects.filter(player_id=a).aggregate(Avg('assists'))['assists__avg']), 2)
-                        content['court'] = round(Msg().ReturnNone(Player_season.objects.filter(player_id=a).aggregate(Avg('all_court'))['all_court__avg']), 2)
-                        content['snatch'] = round(Msg().ReturnNone(Player_season.objects.filter(player_id=a).aggregate(Avg('snatch'))['snatch__avg']), 2)
-                        content['block_shot'] = round(Msg().ReturnNone(Player_season.objects.filter(player_id=a).aggregate(Avg('block_shot'))['block_shot__avg']), 2)
+                        content['rolepostion'] = Player_Basic.objects.get(
+                            user_id=UserProfile.objects.get(id=a).id).position
+                        content['time'] = round(Msg().ReturnNone(
+                            Player_season.objects.filter(player_id=a).aggregate(Avg('time'))['time__avg']), 2)
+                        content['score'] = round(Msg().ReturnNone(
+                            Player_season.objects.filter(player_id=a).aggregate(Avg('score'))['score__avg']), 2)
+                        content['assists'] = round(Msg().ReturnNone(
+                            Player_season.objects.filter(player_id=a).aggregate(Avg('assists'))['assists__avg']), 2)
+                        content['court'] = round(Msg().ReturnNone(
+                            Player_season.objects.filter(player_id=a).aggregate(Avg('all_court'))['all_court__avg']), 2)
+                        content['snatch'] = round(Msg().ReturnNone(
+                            Player_season.objects.filter(player_id=a).aggregate(Avg('snatch'))['snatch__avg']), 2)
+                        content['block_shot'] = round(Msg().ReturnNone(
+                            Player_season.objects.filter(player_id=a).aggregate(Avg('block_shot'))['block_shot__avg']),
+                            2)
                     else:
                         pass
                     date.append(content)
@@ -156,31 +164,67 @@ class Setting:
     def Set_nowseason(self):
         season_id = self.POST.get('season_id')
         team_id = UserProfile.objects.get(user_id=self.user.id).team_id
-        try:
-            TeamSet.objects.filter(team_id=team_id).update(
-                nowseason=season_id
-            )
-            return JsonResponse(Msg().Success(), safe=False)
-        except Exception as e:
-            print(e)
-            return JsonResponse(Msg().Error(), safe=False)
+        msg = TeamSet.objects.filter(team_id=team_id)
+        if len(msg) == 0:
+            try:
+                teamset = TeamSet.objects.create(
+                    team_id=team_id,
+                    nowseason=season_id
+                )
+                teamset.save()
+                return JsonResponse(Msg().Success(), safe=False)
+            except Exception as e:
+                print(e)
+                return JsonResponse(Msg().Error(), safe=False)
+        else:
+            try:
+                TeamSet.objects.filter(team_id=team_id).update(
+                    nowseason=season_id
+                )
+                return JsonResponse(Msg().Success(), safe=False)
+            except Exception as e:
+                print(e)
+                return JsonResponse(Msg().Error(), safe=False)
 
     def Update_setplayers(self):
         postion = self.POST.get('postion')
         player_id = self.POST.get('player_id')
-        try:
-            team_id = UserProfile.objects.get(user_id=self.user.id).team_id
-            if postion == '控球后卫':
-                TeamSet.objects.filter(team_id=team_id).update(pg=player_id)
-            elif postion == '得分后卫':
-                TeamSet.objects.filter(team_id=team_id).update(sg=player_id)
-            elif postion == '小前锋':
-                TeamSet.objects.filter(team_id=team_id).update(sf=player_id)
-            elif postion == '大前锋':
-                TeamSet.objects.filter(team_id=team_id).update(pf=player_id)
-            elif postion == '中锋':
-                TeamSet.objects.filter(team_id=team_id).update(c=player_id)
-        except Exception as e:
-            print(e)
-            return JsonResponse(Msg().Error(), safe=False)
-        return JsonResponse(Msg().Success(), safe=False)
+        team_id = UserProfile.objects.get(user_id=self.user.id).team_id
+        msg = TeamSet.objects.filter(team_id=team_id)
+        if len(msg) == 0:
+            try:
+                if postion == '控球后卫':
+                    teamset = TeamSet.objects.create(team_id=team_id, pg=player_id)
+                    teamset.save()
+                elif postion == '得分后卫':
+                    teamset = TeamSet.objects.create(team_id=team_id, sg=player_id)
+                    teamset.save()
+                elif postion == '小前锋':
+                    teamset = TeamSet.objects.create(team_id=team_id, sf=player_id)
+                    teamset.save()
+                elif postion == '大前锋':
+                    teamset = TeamSet.objects.create(team_id=team_id, pf=player_id)
+                    teamset.save()
+                elif postion == '中锋':
+                    teamset = TeamSet.objects.create(team_id=team_id, c=player_id)
+                    teamset.save()
+                return JsonResponse(Msg().Success(), safe=False)
+            except Exception as e:
+                print(e)
+                return JsonResponse(Msg().Error(), safe=False)
+        else:
+            try:
+                if postion == '控球后卫':
+                    TeamSet.objects.filter(team_id=team_id).update(pg=player_id)
+                elif postion == '得分后卫':
+                    TeamSet.objects.filter(team_id=team_id).update(sg=player_id)
+                elif postion == '小前锋':
+                    TeamSet.objects.filter(team_id=team_id).update(sf=player_id)
+                elif postion == '大前锋':
+                    TeamSet.objects.filter(team_id=team_id).update(pf=player_id)
+                elif postion == '中锋':
+                    TeamSet.objects.filter(team_id=team_id).update(c=player_id)
+                return JsonResponse(Msg().Success(), safe=False)
+            except Exception as e:
+                print(e)
+                return JsonResponse(Msg().Error(), safe=False)
