@@ -138,9 +138,12 @@ class Setting:
 
     @csrf_exempt
     def Show_season(self):
+        page = int(self.POST.get('page'))
+        limit = int(self.POST.get('limit'))
         team_id = UserProfile.objects.get(user_id=self.user.id).team_id
         try:
-            season = Season.objects.all()
+            season = Season.objects.all()[limit * (page - 1):page * limit]
+            count = len(season)
             now_season = TeamSet.objects.filter(team_id=team_id)
             date = list()
             if len(now_season) == 0 or now_season[0].nowseason is None:
@@ -156,7 +159,7 @@ class Setting:
                     context['is_now'] = 'false'
                 context['name'] = i.name
                 date.append(context)
-            return JsonResponse(Msg().Success(date), safe=False)
+            return JsonResponse(Msg().Success(date=date, count=count), safe=False)
         except Exception as e:
             print(e)
             return JsonResponse(Msg().Error(), safe=False)

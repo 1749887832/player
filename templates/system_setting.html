@@ -161,9 +161,9 @@
                 layer.msg('接口报错')
             }
         });
-    })
+    });
     layui.use('table', function () {
-        var table = layui.table
+        var table = layui.table;
         $('#update_setplayer').click(function () {
             var player_id = document.getElementById('the_player').value;
             $.ajax({
@@ -212,6 +212,7 @@
                     }
                 }
             ]]
+            ,page:true
         });
         table.on('tool(tool_season)', function (obj) {
             var season_id = obj.data.id;
@@ -244,7 +245,7 @@
 
                     })
             }
-        })
+        });
         table.render({
             elem: '#demo'
             , height: 290
@@ -271,9 +272,9 @@
         });
         table.on('tool(test)', function (obj) {
             var udpate_setid = obj.data.setid;
-            update_setpostion = obj.data.postion
+            update_setpostion = obj.data.postion;
             if (obj.event === 'del') {
-                if (obj.data.id === undefined) return
+                if (obj.data.id === undefined) return;
                 hsycms.confirm('confirm', '确定移除该首发吗',
                     function () {
                         $.ajax({

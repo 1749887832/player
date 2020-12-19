@@ -12,3 +12,13 @@
     width: 93%;
     /*background-image: url("../images/gblogin2.jpg");*/
 }
+body .layui-card-body{
+    height: 40px;
+}
+body .money_msg{
+    display: flex;
+    flex: 1;
+    float: left;
+    height: 50px;
+    margin-left: 40px;
+}

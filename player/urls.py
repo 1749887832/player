@@ -118,7 +118,10 @@ urlpatterns = [
     path('player/create_command/', Com.Command.C_command),
     # 打开财务管理
     path('player/finance/', Fina.Finance.Show_finance),
-
+    # 显示球队所有的工资
+    path('player/showfinance/', Fina.Finance.Show_playerfinance),
+    # 计算球队工资
+    path('player/countmoney/', Fina.Finance.Count_money),
     # 打开设置中心
     path('player/setting/', Set.Setting.Show_setting),
     # 显示设置中心的薪资
