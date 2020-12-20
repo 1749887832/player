@@ -323,7 +323,7 @@
                     money = document.getElementById('money').value;
                     max_money = document.getElementById('max_money').value;
                     if (Number(money) > Number(max_money)) {
-                        layer.msg('最高奢侈税不能低于赛季工资帽')
+                        layer.msg('最高奢侈税不能低于赛季工资帽');
                         return false
                     } else {
                         $.ajax({

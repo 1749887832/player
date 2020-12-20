@@ -217,6 +217,7 @@ class Player_season(models.Model):
     team_id = models.IntegerField(null=False)
 
 
+# 球队设置表
 class TeamSet(models.Model):
     id = models.AutoField(primary_key=True)
     # 当期赛季
@@ -235,5 +236,28 @@ class TeamSet(models.Model):
     money = models.CharField(max_length=32, null=True)
     # 最高工资帽
     max_money = models.CharField(max_length=32, null=True)
+    # 球队id
+    team_id = models.IntegerField(null=False)
+
+
+# 创建命令表
+class Command(models.Model):
+    id = models.AutoField(primary_key=True)
+    # 命令标题
+    title = models.CharField(max_length=32, null=True)
+    # 指导教练
+    main_player = models.IntegerField(null=False)
+    # 执行任务的球员
+    player = models.CharField(max_length=64, null=False)
+    # 及格线
+    sum_pass = models.CharField(max_length=32, null=False)
+    # 满分线
+    sum_pull = models.CharField(max_length=32, null=False)
+    # 创建开始时间
+    create_time = models.DateTimeField(null=False)
+    # 开始时间
+    start_time = models.DateTimeField(null=False)
+    # 结束时间
+    end_time = models.DateTimeField(null=False)
     # 球队id
     team_id = models.IntegerField(null=False)

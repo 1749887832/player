@@ -111,11 +111,13 @@ urlpatterns = [
     path('player/select_team/', Re.Record.Select_team),
 
     # 打开球员命令中心
-    path('player/command/', Com.Command.Show_command),
+    path('player/command/', Com.Player_Command.Show_command),
     # 查询所有的命令
-    path('player/show_command/', Com.Command.Show_all),
-    # 新建命令
-    path('player/create_command/', Com.Command.C_command),
+    path('player/show_command/', Com.Player_Command.Show_all),
+    # 打开新建命令
+    path('player/create_command/', Com.Player_Command.C_command),
+    # 创建命令
+    path('player/create_commands/', Com.Player_Command.Create_command),
     # 打开财务管理
     path('player/finance/', Fina.Finance.Show_finance),
     # 显示球队所有的工资
