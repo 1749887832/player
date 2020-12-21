@@ -1,10 +1,7 @@
 import json
 from django.http import JsonResponse
 import datetime, time
-
 from django.shortcuts import render
-import datetime
-
 from django.views.decorators.csrf import csrf_exempt
 
 from app.admin.return_msg import Msg
@@ -49,6 +46,15 @@ class Player_Command:
                 context['create_time'] = i.create_time.strftime('%Y-%m-%d %H:%M:%S')
                 context['start_time'] = i.start_time.strftime('%Y-%m-%d') + ' 00:00:00'
                 context['end_time'] = i.end_time.strftime('%Y-%m-%d') + ' 23:59:59'
+                now_time = time.strptime(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+                start_time = time.strptime(context['start_time'], '%Y-%m-%d %H:%M:%S')
+                end_time = time.strptime(context['end_time'], '%Y-%m-%d %H:%M:%S')
+                if now_time < start_time:
+                    context['status'] = '未开始'
+                elif start_time < now_time < end_time:
+                    context['status'] = '进行中'
+                else:
+                    context['status'] = '已结束'
                 date.append(context)
             return JsonResponse(Msg().Success(date=date, count=count), safe=False)
         except Exception as e:
