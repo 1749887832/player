@@ -20,19 +20,19 @@
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px">任务标题</label>
             <div class="layui-input-block">
-                <input type="text" name="main_title" id="main_title" lay-verify="title" autocomplete="off"
+                <input type="text" name="main_title" id="command_title" lay-verify="title" autocomplete="off"
                        placeholder="请输入任务名称"
                        class="layui-input" style="width: 300px;margin-left: -10px">
             </div>
         </div>
         <i class="layui-btn layui-btn-primary layui-icon layui-icon-search"
-           style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="select"></i>
+           style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="command_select"></i>
         <button class="layui-btn layui-btn-primary" style="margin-top: -5px" id="chong">重置</button>
         <br>
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px">负责教练</label>
             <div class="layui-input-inline">
-                <select name="modules" lay-verify="required" lay-search="jiaolian" id="main_player">
+                <select name="modules" lay-verify="required" lay-search="jiaolian" id="command_coach">
                     <option value="">请选择负责教练</option>
                 </select>
             </div>
@@ -40,13 +40,24 @@
         <div class="layui-inline">
             <label class="layui-form-label" style="width: 100px">执行球员</label>
             <div class="layui-input-inline">
-                <select name="modules" lay-verify="required" lay-search="start_player" id="start_player">
+                <select name="modules" lay-verify="required" lay-search="start_player" id="command_player">
                     <option value="">请选择执行球员</option>
                 </select>
             </div>
         </div>
         <div class="layui-inline">
-            <label class="layui-form-label" style="width: 100px">日期范围</label>
+            <label class="layui-form-label" style="width: 100px">任务状态</label>
+            <div class="layui-input-inline">
+                <select name="modules" lay-verify="required" lay-search="start_player" id="command_status">
+                    <option value="">请选择任务状态</option>
+                    <option value="未开始">未开始</option>
+                    <option value="进行中">进行中</option>
+                    <option value="已结束">已结束</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label" style="width: 100px">开始时间</label>
             <div class="layui-input-inline">
                 <input type="text" name="modules" class="layui-input" id="test6" placeholder="请输入时间范围"
                        style="width: 200px">
@@ -71,20 +82,6 @@
 </div>
 </body>
 <script>
-    function renderForm() {
-        layui.use('form', function () {
-            var form = layui.form;
-            form.render();
-        });
-    }
-
-    layui.use('laydate', function () {
-        var laydate = layui.laydate;
-        laydate.render({
-            elem: '#test6'
-            , range: '至'
-        });
-    });
     $(document).ready(function () {
         $.ajax({
             async: true,
@@ -97,7 +94,7 @@
                 $.each(JSON.parse(jsonDate), function (i, item) {
                     {#console.log(item.name);#}
                     var option = "<option value=" + item.id + ">" + item.name + "</option>";
-                    $("#main_player").append(option);
+                    $("#command_coach").append(option);
                     renderForm();
                 });
             },
@@ -115,7 +112,7 @@
                 jsonDate = JSON.stringify(date['data']);
                 $.each(JSON.parse(jsonDate), function (i, item) {
                     var option = "<option value=" + item.id + ">" + item.name + "</option>";
-                    $("#start_player").append(option);
+                    $("#command_player").append(option);
                     renderForm();
                     {#form.render();#}
                 });
@@ -127,16 +124,24 @@
     });
     layui.use('table', function () {
         var table = layui.table;
+        var command_title = document.getElementById('command_title').value;
+        var command_coach = document.getElementById('command_coach').value;
+        var command_player = document.getElementById('command_player').value;
+        var command_status = document.getElementById('command_status').value;
+        var time = document.getElementById('test6').value;
         table.render({
             elem: '#test'
             , url: '/player/show_command/'
             , method: 'post'
             , toolbar: '#toolbarDemo'
-            , defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示'
-                , layEvent: 'LAYTABLE_TIPS'
-                , icon: 'layui-icon-tips'
-            }]
+            , where: {
+                'command_title': command_title,
+                'command_coach': command_coach,
+                'command_player': command_player,
+                'command_status': command_status,
+                'command_time': time,
+            }
+            , defaultToolbar: ['filter', 'exports', 'print']
             , title: '用户数据表'
             , cols: [[
                 {field: 'id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true}
@@ -184,6 +189,55 @@
                     });
                     layer.close(index);
                 });
+            }
+        });
+    });
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on('select', function (data) {
+            var time = document.getElementById('test6').value;
+            get_date(time)
+        });
+    });
+    $('#command_select').click(function () {
+        var time = document.getElementById('test6').value;
+        get_date(time);
+    });
+
+    function get_date(time) {
+        var command_title = document.getElementById('command_title').value;
+        var command_coach = document.getElementById('command_coach').value;
+        var command_player = document.getElementById('command_player').value;
+        var command_status = document.getElementById('command_status').value;
+        var table = layui.table;
+        table.reload('test', {
+            where: {
+                'command_title': command_title,
+                'command_coach': command_coach,
+                'command_player': command_player,
+                'command_status': command_status,
+                'command_time': time,
+            },
+            page: {
+                curr: 1
+            }
+        }, 'data')
+    }
+
+    function renderForm() {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
+    }
+
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#test6'
+            , range: '至'
+            , done:function (value){
+                get_date(value)
             }
         });
     });

@@ -5,334 +5,299 @@
     <title>我的团队</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/system_showall.css' %}">
+    <link rel="stylesheet" href="{% static 'layui/css/layui.css' %}">
     <script src="{% static 'js/jQuery-3.5.1-min.js' %}"></script>
     <script src="{% static 'js/jquery.cookie.js' %}"></script>
-    <script type="text/javascript">
-        function getAll() {
-            var name = document.getElementById('name').value;
-            var age = document.getElementById('age').value;
-            {#var state = document.getElementById('state').value;#}
-            var role = document.getElementById('role').value;
-            var sex = document.getElementById('sex').value;
-            $.ajax({
-                async: true,
-                url: '/player/show_all/',
-                type: 'post',
-                headers: {"X-CSRFToken": $.cookie("csrftoken")},
-                data: {
-                    'name': name,
-                    'age': age,
-                    'role': role,
-                    'sex': sex
-                },
-                success: function (date) {
-                    all_context = date;
-                    sum = JSON.parse(JSON.stringify(all_context)).length;
-                    page = Math.ceil(sum / 8);
-                    $('#sum').text('共' + page + '页');
-                    button();
-                    show_all()
-                },
-                error: function (msg) {
-                    alert('错误')
-                }
-            })
-        }
-        var all_context;
-        var num = 0;
-        var page = 0;
-        function button() {
-            if (num === 0) {
-                $('#pre').attr('disabled', true);
-            } else {
-                $('#pre').attr('disabled', false);
-            }
-            if (num === page - 1) {
-                $('#next').attr('disabled', true);
-            } else {
-                $('#next').attr('disabled', false)
-            }
-        }
-        function go_next() {
-            num = num + 1;
-            button();
-            show_all();
-        }
-        function go_pre() {
-            num = num - 1;
-            button();
-            show_all()
-        }
-        function show_all() {
-            $('.a').remove();
-            jsonDate = JSON.stringify(all_context);
-            $.each(JSON.parse(jsonDate), function (i, item) {
-                if (0 + 8 * num <= i && i <= 7 + 8 * num) {
-                    var td = "<tr class='a'>"
-                        + "<td><img src=" + "http://127.0.0.1:8000/static/" + item.userpic + "></td>" +
-                        "<td>" + item.name + "</td>" +
-                        "<td>" + item.sex + "</td>" +
-                        "<td>" + item.age + "</td>" +
-                        "<td>" + item.role + "</td>" +
-                        "<td>" + item.palace.split('-')[0] + "</td>" +
-                        "<td>" + item.school.split('-')[item.school.split('-').length - 1] + "</td>" +
-                        "<td><a onclick='add_jx(\"" + item.userid + "\",\"" + item.name + "\")'>编辑</a></td>" +
-                        "</tr>";
-                    $('#context').append(td)
-                }
-            });
-        }
-        var p_context;
-        var p_num = 0;
-        var p_page = 0;
-        function getPlayer() {
-            var p_name = document.getElementById('p_name').value;
-            var p_age = document.getElementById('p_age').value;
-            var p_state = document.getElementById('p_state').value;
-            var p_position = document.getElementById('p_position').value;
-            var p_sex = document.getElementById('p_sex').value;
-            $.ajax({
-                async: true,
-                url: '/player/show_player/',
-                type: 'post',
-                headers: {"X-CSRFToken": $.cookie("csrftoken")},
-                data: {
-                    'p_name': p_name,
-                    'p_age': p_age,
-                    'p_position': p_position,
-                    'p_state':p_state,
-                    'p_sex': p_sex
-                },
-                success: function (date) {
-                    {#console.log(date)#}
-                    p_context = date;
-                    sum = JSON.parse(JSON.stringify(p_context)).length;
-                    p_page = Math.ceil(sum / 8);
-                    $('#p_sum').text('共' + p_page + '页');
-                    p_button();
-                    show_player()
-                },
-                error: function (msg) {
-                    alert('错误')
-                }
-            })
-        }
-        function show_player() {
-            $('.a').remove();
-            jsonDate = JSON.stringify(p_context);
-            $.each(JSON.parse(jsonDate), function (i, item) {
-                if (0 + 8 * p_num <= i && i <= 7 + 8 * p_num) {
-                    var td = "<tr class='a'>"
-                        + "<td><img src=" + "http://127.0.0.1:8000/static/" + item.userpic + "></td>" +
-                        "<td>" + item.name + "</td>" +
-                        "<td>" + item.sex + "</td>" +
-                        "<td>" + item.age + "</td>" +
-                        "<td>" + item.position + "</td>" +
-                        "<td>" + item.state + "</td>" +
-                        "<td>" + item.palace.split('-')[0] + "</td>" +
-                        "<td>" + item.school.split('-')[item.school.split('-').length - 1] + "</td>" +
-                        "<td><a onclick='add_jx(\"" + item.userid + "\",\"" + item.name + "\")'>解约</a></td>" +
-                        "</tr>";
-                    $('#p_context').append(td)
-                }
-            });
-        }
-        function p_button() {
-            if (p_num === 0) {
-                $('#p_pre').attr('disabled', true);
-            } else {
-                $('#p_pre').attr('disabled', false);
-            }
-            if (p_num === p_page - 1) {
-                $('#p_next').attr('disabled', true);
-            } else {
-                $('#p_next').attr('disabled', false)
-            }
-        }
-        function go_p_pre() {
-            num = num + 1;
-            p_button();
-            show_player();
-        }
-        function go_p_next() {
-            num = num - 1;
-            p_button();
-            show_player()
-        }
-        $(document).ready(function () {
-            getAll();
-            var $li = $('.body .f_head ul li');
-            var $div = $('.body .f_context div');
-            $li.click(function () {
-                $(this).addClass('a_active').siblings().removeClass('a_active');
-                $div.eq($(this).index()).addClass('sh').siblings().removeClass('sh');
-                if ($(this).index() === 0) {
-                    getAll()
-                } else{
-                    getPlayer()
-                }
-            });
-            var $all_get = $('#all_get');
-            $all_get.click(function () {
-                getAll()
-            });
-            $('#chong').click(function () {
-                document.getElementById('name').value = '';
-                document.getElementById('age').value = '';
-                {#document.getElementById('state').value = '';#}
-                document.getElementById('role').value = '';
-                document.getElementById('sex').value = '';
-                getAll();
-            });
-            $('#p_chong').click(function () {
-                document.getElementById('p_name').value = '';
-                document.getElementById('p_age').value = '';
-                document.getElementById('p_state').value = '';
-                document.getElementById('p_position').value = '';
-                document.getElementById('p_sex').value = '';
-                getPlayer();
-            });
-            var all = $('.all select');
-            all.change(function () {
-                getAll();
-            });
-            var player = $('.player select');
-            player.change(function () {
-                getPlayer();
-            });
-        })
-    </script>
+    <script src="{% static 'layui/layui.js' %}"></script>
 </head>
 <body>
 {% include 'system_index.html' %}
 <div class="body">
-    <div class="f_head">
-        <ul>
-            <li class="a_active">全部</li>
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">全部</li>
             <li>球员</li>
         </ul>
-    </div>
-    <div class="f_context">
-        <div class="all sh">
-            <form action="">
-                <label for="">
-                    <input type="text" placeholder="请输入球员姓名" value="" id="name" name="name">
-                    <span class="glyphicon glyphicon-search" id="all_get"></span>
-                    <button type="reset" id="chong">重置</button>
-                </label>
-            </form>
-            <ul>
-                <li style="padding-left: 10px"><span>年龄：</span>
-                    <select name="age" id="age">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择年龄</option>
-                        <option value="1">0-20</option>
-                        <option value="2">20-30</option>
-                        <option value="3">30以上</option>
-                    </select>
-                </li>
-                <li><span>性别：</span>
-                    <select name="sex" id="sex">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择性别</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                    </select>
-                </li>
-                {#                <li><span>状态：</span>#}
-                {#                    <select name="state" id="state">#}
-                {#                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>#}
-                {#                        <option value="健康">健康</option>#}
-                {#                        <option value="伤病">伤病</option>#}
-                {#                    </select>#}
-                {#                </li>#}
-                <li><span>角色：</span>
-                    <select name="role" id="role">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择角色</option>
-                        <option value="老板">老板</option>
-                        <option value="教练">教练</option>
-                        <option value="球员">球员</option>
-                        <option value="球探">球探</option>
-                        <option value="其他">其他</option>
-                    </select>
-                </li>
-            </ul>
-            <table id="context">
-                <tr>
-                    <th>头像</th>
-                    <th>姓名</th>
-                    <th>性别</th>
-                    <th>年龄</th>
-                    <th>角色</th>
-                    <th>家庭住址</th>
-                    <th>毕业学校</th>
-                    <th>操作</th>
-                </tr>
-            </table>
-            <p><span id="sum">1</span>
-                <button onclick="go_pre()" id="pre">上一页</button>
-                <button onclick="go_next()" id="next">下一页</button>
-            </p>
-        </div>
-        <div class="player">
-            <form action="">
-                <label for="">
-                    <input type="text" placeholder="请输入球员姓名" value="" id="p_name" name="p_name">
-                    <span class="glyphicon glyphicon-search" id="all_get"></span>
-                    <button type="reset" id="p_chong">重置</button>
-                </label>
-            </form>
-            <ul>
-                <li style="padding-left: 10px"><span>年龄：</span>
-                    <select name="p_age" id="p_age">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择年龄</option>
-                        <option value="1">0-20</option>
-                        <option value="2">20-30</option>
-                        <option value="3">30以上</option>
-                    </select>
-                </li>
-                <li><span>性别：</span>
-                    <select name="p_sex" id="p_sex">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择性别</option>
-                        <option value="男">男</option>
-                        <option value="女">女</option>
-                    </select>
-                </li>
-                <li><span>状态：</span>
-                    <select name="p_state" id="p_state">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择状态</option>
-                        <option value="健康">健康</option>
-                        <option value="伤病">伤病</option>
-                    </select>
-                </li>
-                <li><span>角色：</span>
-                    <select name="p_position" id="p_position">
-                        <option value="" disabled="disabled" selected="selected" hidden="hidden">请选择位置</option>
-                        <option value="控球后卫">控球后卫</option>
-                        <option value="得分后卫">得分后卫</option>
-                        <option value="小前锋">小前锋</option>
-                        <option value="大前锋">大前锋</option>
-                        <option value="中锋">中锋</option>
-                    </select>
-                </li>
-            </ul>
-            <table id="p_context">
-                <tr>
-                    <th>头像</th>
-                    <th>姓名</th>
-                    <th>性别</th>
-                    <th>年龄</th>
-                    <th>位置</th>
-                    <th>状态</th>
-                    <th>家庭住址</th>
-                    <th>毕业学校</th>
-                    <th>操作</th>
-                </tr>
-            </table>
-            <p><span id="p_sum">1</span>
-                <button onclick="go_p_pre()" id="p_pre">上一页</button>
-                <button onclick="go_p_next()" id="p_next">下一页</button>
-            </p>
+        <div class="layui-tab-content" style="height: 100px;">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form" action="" method="post">
+                    {% csrf_token %}
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">球员名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="" id="name" lay-verify="title" autocomplete="off"
+                                   placeholder="请输入球员名字"
+                                   class="layui-input" style="width: 300px;margin-left: -10px">
+                        </div>
+                    </div>
+                    <i class="layui-btn layui-btn-primary layui-icon layui-icon-search"
+                       style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="showall_select"></i>
+                    <button class="layui-btn layui-btn-primary" style="margin-top: -5px">重置</button>
+                    <br>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">年&nbsp;&nbsp;&nbsp;&nbsp;龄</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="all_team" lay-search="all_team"
+                                    id="age">
+                                <option value="">请选择年龄</option>
+                                <option value="1">0-20</option>
+                                <option value="2">20-30</option>
+                                <option value="3">30-100</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">性&nbsp;&nbsp;&nbsp;&nbsp;别</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="all_team" lay-search="all_team"
+                                    id="sex">
+                                <option value="">请选择性别</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">角&nbsp;&nbsp;&nbsp;&nbsp;色</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="all_team" lay-search="all_team"
+                                    id="role">
+                                <option value="">请选择角色</option>
+                                <option value="老板">老板</option>
+                                <option value="教练">教练</option>
+                                <option value="球探">球探</option>
+                                <option value="球员">球员</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <table class="layui-hide" id="team" lay-filter="team"></table>
+                <script type="text/html" id="allDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="details">编辑</a>
+                </script>
+            </div>
+            <div class="layui-tab-item">
+                <form class="layui-form" action="" method="post">
+                    {% csrf_token %}
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">球员名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="" id="p_name" lay-verify="title" autocomplete="off"
+                                   placeholder="请输入球员名字"
+                                   class="layui-input" style="width: 300px;margin-left: -10px">
+                        </div>
+                    </div>
+                    <i class="layui-btn layui-btn-primary layui-icon layui-icon-search"
+                       style="font-size: 24px;margin-top: -5px;margin-left: -9px" id="player_select"></i>
+                    <p class="layui-btn layui-btn-primary" style="margin-top: 3px" id="chong">重置</p>
+                    <br>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">年&nbsp;&nbsp;&nbsp;&nbsp;龄</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="showall_player" lay-search="showall_player"
+                                    id="p_age">
+                                <option value="">请选择年龄</option>
+                                <option value="1">0-20</option>
+                                <option value="2">20-30</option>
+                                <option value="3">30-100</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">性&nbsp;&nbsp;&nbsp;&nbsp;别</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="showall_player" lay-search="showall_player"
+                                    id="p_sex">
+                                <option value="">请选择性别</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">状&nbsp;&nbsp;&nbsp;&nbsp;态</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="showall_player" lay-search="showall_player"
+                                    id="p_status">
+                                <option value="">请选择状态</option>
+                                <option value="健康">健康</option>
+                                <option value="伤病">伤病</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px">位&nbsp;&nbsp;&nbsp;&nbsp;置</label>
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-filter="showall_player" lay-search="showall_player"
+                                    id="p_position">
+                                <option value="">请选择球员位置</option>
+                                <option value="控球后卫">控球后卫</option>
+                                <option value="得分后卫">得分后卫</option>
+                                <option value="小前锋">小前锋</option>
+                                <option value="大前锋">大前锋</option>
+                                <option value="中锋">中锋</option>
+                            </select>
+                        </div>
+                    </div>
+
+                </form>
+                <table class="layui-hide" id="all_player" lay-filter="all_player"></table>
+                <script type="text/html" id="playerDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="details">解约</a>
+                </script>
+            </div>
         </div>
     </div>
 </div>
 </body>
+
+<script>
+    function renderForm() {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
+    }
+    $('#chong').click(function () {
+        document.getElementById('p_name').value='';
+        document.getElementById('p_age').value='';
+        document.getElementById('p_sex').value='';
+        document.getElementById('p_status').value='';
+        document.getElementById('p_position').value='';
+        renderForm()
+        get_playerdate()
+    })
+    layui.use('form', function () {
+        var form = layui.form;
+        form.on('select(all_team)', function () {
+            get_date()
+        });
+        form.on('select(showall_player)',function () {
+            get_playerdate()
+        })
+    })
+    $('#showall_select').click(function () {
+        get_date();
+    });
+    $('#player_select').click(function () {
+        get_playerdate();
+    });
+    function get_playerdate(){
+        var p_name = document.getElementById('p_name').value;
+        var p_age = document.getElementById('p_age').value;
+        var p_sex = document.getElementById('p_sex').value;
+        var p_state = document.getElementById('p_status').value;
+        var p_position = document.getElementById('p_position').value;
+        var table = layui.table;
+        table.reload('all_player', {
+            where: {
+                'p_name': p_name,
+                'p_age': p_age,
+                'p_sex': p_sex,
+                'p_state': p_state,
+                'p_position': p_position,
+            },
+            page: {
+                curr: 1
+            }
+        }, 'data')
+    }
+    function get_date() {
+        var name = document.getElementById('name').value;
+        var age = document.getElementById('age').value;
+        var sex = document.getElementById('sex').value;
+        var role = document.getElementById('role').value;
+        var table = layui.table;
+        table.reload('team', {
+            where: {
+                'name': name,
+                'age': age,
+                'sex': sex,
+                'role': role,
+            },
+            page: {
+                curr: 1
+            }
+        }, 'data')
+    }
+
+    layui.use('element', function () {
+        var $ = layui.jquery
+            , element = layui.element;
+
+    });
+    layui.use('table', function () {
+        var table = layui.table;
+        var name = document.getElementById('name').value;
+        var age = document.getElementById('age').value;
+        var role = document.getElementById('role').value;
+        var sex = document.getElementById('sex').value;
+        table.render({
+            elem: '#team'
+            , url: '/player/show_all/'
+            , toolbar: 'allDemo'
+            , title: '用户数据表'
+            , where: {
+                'name': name,
+                'age': age,
+                'role': role,
+                'sex': sex,
+            }
+            , defaultToolbar: ['filter', 'exports', 'print']
+            , method: 'post'
+            , cols: [[
+                {field: 'userid', title: 'ID', width: 80, fixed: 'left'}
+                , {
+                    field: 'name', title: '姓名', width: 220, templet: function (data) {
+                        return '<p><img style="height:20px;width:20px;border-radius:20px;margin-top:-3px;margin-right:3px" src=http://127.0.0.1:8000/static/' + data.userpic + '/>' + '<span>' + data.name + '</span></p>'
+                    }
+                }
+                , {field: 'age', title: '年龄', width: 120}
+                , {field: 'sex', title: '性别', width: 160}
+                , {field: 'role', title: '角色', width: 160}
+                , {field: 'palace', title: '住址',}
+                , {field: 'school', title: '学校',}
+                , {fixed: 'right', title: '操作', toolbar: '#allDemo', width: 150}
+            ]]
+            , page: true
+        });
+        var p_name = document.getElementById('p_name').value;
+        var p_age = document.getElementById('p_age').value;
+        var p_sex = document.getElementById('p_sex').value;
+        var p_state = document.getElementById('p_status').value;
+        var p_position = document.getElementById('p_position').value;
+        table.render({
+            elem: '#all_player'
+            , url: '/player/show_player/'
+            , toolbar: 'playerDemo'
+            , where: {
+                'p_name': p_name,
+                'p_age': p_age,
+                'p_sex': p_sex,
+                'p_state': p_state,
+                'p_position': p_position,
+            }
+            , title: '用户数据表'
+            , defaultToolbar: ['filter', 'exports', 'print']
+            , method: 'post'
+            , cols: [[
+                {field: 'userid', title: 'ID', width: 80, fixed: 'left'}
+                , {
+                    field: 'name', title: '姓名', width: 140, templet: function (data) {
+                        return '<p><img style="height:20px;width:20px;border-radius:20px;margin-top:-3px;margin-right:3px" src=http://127.0.0.1:8000/static/' + data.userpic + '/>' + '<span>' + data.name + '</span></p>'
+                    }
+                }
+                , {field: 'age', title: '年龄', width: 80}
+                , {field: 'sex', title: '性别', width: 80}
+                , {field: 'state', title: '状态', width: 80}
+                , {field: 'palace', title: '住址',}
+                , {field: 'school', title: '学校',}
+                , {field: 'position', title: '位置',}
+                , {field: 'specialty', title: '技术特点',}
+                , {fixed: 'right', title: '操作', toolbar: '#allDemo', width: 150}
+            ]]
+            , page: true
+        })
+    })
+</script>
 </html>

@@ -22,11 +22,25 @@ class Player_Command:
 
     @csrf_exempt
     def Show_all(self):
+        command_title = self.POST.get('command_title')
+        command_coach = self.POST.get('command_coach')
+        command_player = self.POST.get('command_player')
+        command_status = self.POST.get('command_status')
+        command_time = self.POST.get('command_time')
+        if command_time == '':
+            command_time = '0001-1-1 至 9999-12-31'
+        times = command_time.split('至')
+        start_time = datetime.datetime(year=int(times[0].split('-')[0]), month=int(times[0].split('-')[1]),
+                                       day=int(times[0].split('-')[2]), hour=0, minute=0, second=0)
+        end_time = datetime.datetime(year=int(times[1].split('-')[0]), month=int(times[1].split('-')[1]),
+                                     day=int(times[1].split('-')[2]), hour=0, minute=0, second=0)
+        # print(command_time, command_coach, command_player, command_status, command_title)
         page = int(self.POST.get('page'))
         limit = int(self.POST.get('limit'))
         try:
             team_id = UserProfile.objects.get(user_id=self.user.id).team_id
-            command = Command.objects.filter(team_id=team_id)[limit * (page - 1):page * limit]
+            command = Command.objects.filter(team_id=team_id, player__icontains=command_player, main_player__icontains=command_coach, title__icontains=command_title,
+                                             start_time__range=[start_time, end_time])[limit * (page - 1):page * limit]
             count = len(command)
             date = list()
             for i in command:
@@ -55,7 +69,13 @@ class Player_Command:
                     context['status'] = '进行中'
                 else:
                     context['status'] = '已结束'
-                date.append(context)
+                if command_status == '':
+                    date.append(context)
+                else:
+                    if command_status == context['status']:
+                        date.append(context)
+                    else:
+                        continue
             return JsonResponse(Msg().Success(date=date, count=count), safe=False)
         except Exception as e:
             print(e)
@@ -68,7 +88,6 @@ class Player_Command:
         return render(self, 'system_createcommand.html', context)
 
     def Create_command(self):
-        print(self.POST)
         title = self.POST.get('title')
         main_player = self.POST.get('main_player')
         time = self.POST.get('time')
@@ -80,7 +99,6 @@ class Player_Command:
         sum_pull = self.POST.get('pull')
         team_id = UserProfile.objects.get(user_id=self.user.id).team_id
         create_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(time)
         if time == '':
             start_time = '2000-1-1'
             end_time = '2099-12-31'

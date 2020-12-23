@@ -39,10 +39,10 @@ class P_Tactics:
         main_player = Msg().ReNone(self.POST.get('main_player'))
         start_player = Msg().ReNone(self.POST.get('start_player'))
         end_player = Msg().ReNone(self.POST.get('end_player'))
-        time = self.POST.get('time')
-        if time == '':
-            time = '0001-1-1 至 9999-12-31'
-        times = time.split('至')
+        tactics_time = self.POST.get('time')
+        if tactics_time == '':
+            tactics_time = '0001-1-1 至 9999-12-31'
+        times = tactics_time.split('至')
         start_time = datetime.datetime(year=int(times[0].split('-')[0]), month=int(times[0].split('-')[1]),
                                        day=int(times[0].split('-')[2]), hour=0, minute=0, second=0)
         end_time = datetime.datetime(year=int(times[1].split('-')[0]), month=int(times[1].split('-')[1]),
