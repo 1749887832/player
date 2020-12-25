@@ -11,7 +11,8 @@
     float: left;
     height: 93vh;
     width: 93%;
-    background-image: url("../images/gblogin2.jpg");
+    overflow: auto;
+    /*background-image: url("../images/gblogin2.jpg");*/
 }
 
 .body .a_head ul {

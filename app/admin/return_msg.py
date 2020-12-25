@@ -2,8 +2,8 @@ class Msg:
     def __init__(self):
         super().__init__()
 
-    def Success(self, date=None, count=None):
-        data = {"code": 0, "msg": "成功", 'count': count, 'data': date}
+    def Success(self, date=None, count=None, msg='成功'):
+        data = {"code": 0, "msg": msg, 'count': count, 'data': date}
         return data
 
     def Error(self, date='接口访问失败'):
