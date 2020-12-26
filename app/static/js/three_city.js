@@ -71,14 +71,14 @@ window.onload=function(){
             $("#city1").html(citySelectStr);
             $("#school1").show();
             $("#school2").hide();
-            var selectschool = $("#city").val();
+            var selectschool = $("#city1").val();
             var schoolUlStr = "";
             var schoolListStr = allschool[selectschool];
             for(var i=0,len=schoolListStr.length;i<len;i++){
                 schoolUlStr = schoolUlStr + "<option >"+schoolListStr[i][2]+"</option>";
             }
             schoolUlStr = schoolUlStr + "<option value='999'>其它</option>";
-            $("#school").html(schoolUlStr);
+            $("#school1").html(schoolUlStr);
         });
         //切换城市事件
         $("#city").change(function(){

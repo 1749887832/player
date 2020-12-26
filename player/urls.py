@@ -64,6 +64,14 @@ urlpatterns = [
     path('player/show_all/', Show.ShowTeam.showAllrole),
     # 查询该队的球员
     path('player/show_player/', Show.ShowTeam.showAllPlayer),
+    # 解约球员
+    path('player/del_player/', Show.ShowTeam.DelPlyaer),
+    # 修改传参
+    path('player/real_updateuser/', Show.ShowTeam.RalUpdatePlayer),
+    # 上传头像接口
+    path('player/update_pic/', Show.ShowTeam.Update_pic),
+    # 我的球员信息数据回显
+    path('player/select_myplayer/', Show.ShowTeam.Select_myplayer),
     # 战术管理接口
     path('player/tactics/', Ta.P_Tactics.Show_all),
     # 查询所有战术

@@ -75,7 +75,6 @@
                 } else if (time === '') {
                     $('#time').next().css('visibility', 'visible')
                 } else {
-                    console.log('启动Ajax请求...');
                     $.ajax({
                         async: true,
                         url: '/player/create_player/',
