@@ -50,9 +50,9 @@ class Index(View):
                     count = count + 1
             context = dict()
             context['date'] = date
-            print(date)
+            # print(date)
             season_date = {'No': 1, 'success': count, 'error': all_count - count, 's_sum': round(count / all_count*100, 2)}
-            print(season_date)
+            # print(season_date)
             context['team_date'] = team_date
             context['team_one'] = team_one
             context['season_date'] = season_date
