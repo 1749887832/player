@@ -1,5 +1,6 @@
 from itertools import chain
 
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse
 from django.views.generic.base import View
@@ -23,48 +24,11 @@ class Admin_Add(View):
 
     # 显示所有的球员
     def ShowAll(self):
-        global age1, age2
-        name = self.POST.get('name')
-        age = self.POST.get('age')
-        state = self.POST.get('state')
-        where = self.POST.get('where')
-        sex = self.POST.get('sex')
-        if age == '':
-            age1 = '0'
-            age2 = 100
-        elif age == '1':
-            age1 = 0
-            age2 = 20
-        elif age == '2':
-            age1 = 20
-            age2 = 30
-        elif age == '3':
-            age1 = 30
-            age2 = 100
-        player = UserProfile.objects.filter(team_id=None, name__icontains=name, sex__icontains=sex,
-                                            age__range=[age1, age2])
-        basic = Player_Basic.objects.filter(state__icontains=state, position__icontains=where)
-        date = list()
-        for i in player:
-            for j in basic:
-                if i.id == j.user_id:
-                    context = dict()
-                    context['userid'] = j.user_id
-                    context["userpic"] = i.userpic
-                    context["name"] = i.name
-                    context["sex"] = i.sex
-                    context["age"] = i.age
-                    context["state"] = j.state
-                    context["position"] = j.position
-                    context["palace"] = i.palace
-                    context["school"] = i.school
-                    date.append(context)
-        return JsonResponse(Msg().Success(date=date), safe=False)
-
-    # 显示集训名单的球员
-    def ShowJxplayer(self):
         try:
+            team_id = UserProfile.objects.get(user_id=self.user.id).team_id
             global age1, age2
+            page = int(self.POST.get('page'))
+            limit = int(self.POST.get('limit'))
             name = self.POST.get('name')
             age = self.POST.get('age')
             state = self.POST.get('state')
@@ -84,7 +48,64 @@ class Admin_Add(View):
                 age2 = 100
             player = UserProfile.objects.filter(team_id=None, name__icontains=name, sex__icontains=sex,
                                                 age__range=[age1, age2])
-            basic = Player_Basic.objects.filter(state__icontains=state, position__icontains=where, enable=2)
+            basic = Player_Basic.objects.filter(
+                where_from__in=[x.user_id for x in UserProfile.objects.filter(team_id=team_id)],
+                state__icontains=state, position__icontains=where)
+            date = list()
+            count = 0
+            for i in player:
+                for j in basic:
+                    if i.id == j.user_id:
+                        context = dict()
+                        context['userid'] = j.user_id
+                        context["userpic"] = i.userpic
+                        context["name"] = i.name
+                        context["sex"] = i.sex
+                        context["age"] = i.age
+                        context["state"] = j.state
+                        context["position"] = j.position
+                        context["palace"] = i.palace
+                        context["school"] = i.school
+                        count = count + 1
+                        if count <= page * limit:
+                            date.append(context)
+                        else:
+                            pass
+            return JsonResponse(Msg().Success(date=date, count=count), safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse(Msg().Error(), safe=False)
+
+    # 显示集训名单的球员
+    def ShowJxplayer(self):
+        team_id = UserProfile.objects.get(user_id=self.user.id).team_id
+        try:
+            global age1, age2
+            page = int(self.POST.get('page'))
+            limit = int(self.POST.get('limit'))
+            name = self.POST.get('name')
+            age = self.POST.get('age')
+            state = self.POST.get('state')
+            where = self.POST.get('where')
+            sex = self.POST.get('sex')
+            if age == '':
+                age1 = '0'
+                age2 = 100
+            elif age == '1':
+                age1 = 0
+                age2 = 20
+            elif age == '2':
+                age1 = 20
+                age2 = 30
+            elif age == '3':
+                age1 = 30
+                age2 = 100
+            player = UserProfile.objects.filter(team_id=None, name__icontains=name, sex__icontains=sex,
+                                                age__range=[age1, age2])
+            basic = Player_Basic.objects.filter(
+                where_from__in=[x.user_id for x in UserProfile.objects.filter(team_id=team_id)],
+                state__icontains=state, position__icontains=where, enable=2)
+            count = 0
             date = list()
             for j in basic:
                 for k in player:
@@ -99,17 +120,21 @@ class Admin_Add(View):
                         context["position"] = j.position
                         context["palace"] = k.palace
                         context["school"] = k.school
-                        date.append(context)
-                        pass
+                        count = count + 1
+                        if page * limit >= count:
+                            date.append(context)
+                        else:
+                            pass
                     pass
                 pass
-            return JsonResponse(Msg().Success(date=date), safe=False)
+            return JsonResponse(Msg().Success(date=date, count=count), safe=False)
         except Exception as e:
             print(e)
             return JsonResponse(Msg().Error(), safe=False)
 
     # 显示试训的球员
     def ShowSxplayer(self):
+        team_id = UserProfile.objects.get(user_id=self.user.id).team_id
         try:
             global age1, age2
             name = self.POST.get('name')
@@ -117,6 +142,8 @@ class Admin_Add(View):
             state = self.POST.get('state')
             where = self.POST.get('where')
             sex = self.POST.get('sex')
+            page = int(self.POST.get('page'))
+            limit = int(self.POST.get('limit'))
             if age == '':
                 age1 = '0'
                 age2 = 100
@@ -131,9 +158,12 @@ class Admin_Add(View):
                 age2 = 100
             player = UserProfile.objects.filter(team_id=None, name__icontains=name, sex__icontains=sex,
                                                 age__range=[age1, age2])
-            basic = Player_Basic.objects.filter(state__icontains=state, position__icontains=where, enable=3)
+            basic = Player_Basic.objects.filter(
+                where_from__in=[x.user_id for x in UserProfile.objects.filter(team_id=team_id)],
+                state__icontains=state, position__icontains=where, enable=3)
             player_data = Player_Data.objects.all()
             date = list()
+            count = 0
             for i in player_data:
                 for j in basic:
                     for k in player:
@@ -157,11 +187,12 @@ class Admin_Add(View):
                             context['s_run'] = i.s_run
                             context['b_run'] = i.b_run
                             context['f_basket'] = i.f_basket
-                            date.append(context)
-                            pass
-                        pass
-                    pass
-            return JsonResponse(Msg().Success(date=date), safe=False)
+                            count = count + 1
+                            if page * limit >= count:
+                                date.append(context)
+                            else:
+                                pass
+            return JsonResponse(Msg().Success(date=date, count=count), safe=False)
         except Exception as e:
             print(e)
             return JsonResponse(Msg().Error(), safe=False)

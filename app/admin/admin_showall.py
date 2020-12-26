@@ -44,7 +44,8 @@ class ShowTeam:
         elif age == '3':
             age1 = 30
             age2 = 100
-        data = UserProfile.objects.filter(team_id=team_id, name__icontains=name, sex__icontains=sex, age__range=[age1, age2], role__icontains=role)
+        data = UserProfile.objects.filter(team_id=team_id, name__icontains=name, sex__icontains=sex,
+                                          age__range=[age1, age2], role__icontains=role)
         all_date = data[limit * (page - 1):page * limit]
         count = len(data)
         # print(all)
@@ -97,7 +98,6 @@ class ShowTeam:
             for i in player:
                 for j in basic:
                     if i.id == j.user_id:
-                        count = count + 1
                         context = dict()
                         context['userid'] = i.id
                         context['name'] = i.name
@@ -109,7 +109,11 @@ class ShowTeam:
                         context['palace'] = i.palace
                         context['school'] = i.school
                         context['specialty'] = Player_Data.objects.get(user_id=j.id).specialty
-                        date.append(context)
+                        count = count + 1
+                        if page * limit >= count:
+                            date.append(context)
+                        else:
+                            pass
             # print(date)
         except Exception as e:
             print(e)
