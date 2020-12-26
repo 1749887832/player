@@ -26,10 +26,10 @@
             <h2>球队战绩:</h2>
             <hr>
             <ul>
-                <li>NO:1</li>
-                <li>胜:56</li>
-                <li>负:12</li>
-                <li>胜率:78.22%</li>
+                <li>NO:{{ season_date.No }}</li>
+                <li>胜:{{ season_date.success }}</li>
+                <li>负:{{ season_date.error }}</li>
+                <li>胜率:{{ season_date.s_sum }}%</li>
             </ul>
         </div>
         <div class="right-bottom">

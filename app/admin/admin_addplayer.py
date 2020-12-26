@@ -1,13 +1,10 @@
-from itertools import chain
-
-from django.db.models import Q
 from django.http import JsonResponse
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 from django.views.generic.base import View
 import datetime
 
 from app.admin.return_msg import Msg
-from app.models import UserProfile, Player_Basic, Player_Data, SignUp, Team
+from app.models import UserProfile, Player_Basic, Player_Data, SignUp
 
 
 class Admin_Add(View):
@@ -66,6 +63,7 @@ class Admin_Add(View):
                         context["position"] = j.position
                         context["palace"] = i.palace
                         context["school"] = i.school
+                        context['where_from'] = UserProfile.objects.get(user_id=j.where_from).name
                         count = count + 1
                         if count <= page * limit:
                             date.append(context)
@@ -120,6 +118,7 @@ class Admin_Add(View):
                         context["position"] = j.position
                         context["palace"] = k.palace
                         context["school"] = k.school
+                        context['where_from'] = UserProfile.objects.get(user_id=j.where_from).name
                         count = count + 1
                         if page * limit >= count:
                             date.append(context)
@@ -187,6 +186,7 @@ class Admin_Add(View):
                             context['s_run'] = i.s_run
                             context['b_run'] = i.b_run
                             context['f_basket'] = i.f_basket
+                            context['where_from'] = UserProfile.objects.get(user_id=j.where_from).name
                             count = count + 1
                             if page * limit >= count:
                                 date.append(context)

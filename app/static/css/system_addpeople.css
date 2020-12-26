@@ -10,7 +10,7 @@
     float: left;
     height: 93vh;
     width: 93%;
-    background-image: url("../images/gblogin2.jpg");
+    /*background-image: url("../images/gblogin2.jpg");*/
 }
 .body .f_head{
     height: 7vh;
@@ -52,7 +52,7 @@
     position: relative;
     border-radius: 10px;
 }
-.f_context h2{
+.layui-tab-content h2{
     margin: 10px;
     padding-top: 10px;
     cursor: pointer;
@@ -60,7 +60,7 @@
 .f_context .act{
     display: block;
 }
-.f_context form{
+.layui-tab-content form{
     font-size: 16px;
 }
 .add_player_a{
@@ -119,7 +119,7 @@
     border: 1px silver solid;
     cursor: pointer;
 }
-.f_context p{
+.layui-tab-content p{
     position: absolute;
     left: 30px;
     bottom: 160px;
@@ -127,7 +127,7 @@
     height: 35px;
     display: block;
     width: 200px;
-    margin: 30px;
+    margin-left: 120px;
     border: none;
     background-color: cornflowerblue;
     color: white;

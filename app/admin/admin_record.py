@@ -254,21 +254,6 @@ class Record:
         except Exception:
             return JsonResponse(Msg().Error(), safe=False)
 
-    # 比较两个球队的得分，然后得出结果
-    def Judge(self, one_score, two_score, one_id, two_id, you_id):
-        if one_score > two_score:
-            if one_id == you_id:
-                return "胜利"
-            else:
-                return "失败"
-        elif one_score < two_score:
-            if two_id == you_id:
-                return "胜利"
-            else:
-                return "失败"
-        else:
-            return "平局"
-
     @csrf_exempt
     def Show_teamrecord(self):
         page = self.POST.get('page')
@@ -322,10 +307,10 @@ class Record:
                     Sum('score'))['score__sum']
             context['two_score'] = Msg().ReturnNone(two_score)
             # 结果
-            context['result'] = Record().Judge(context['one_score'], context['two_score'], one_id, two_id, team_id)
+            context['result'] = Msg().Judge(context['one_score'], context['two_score'], one_id, two_id, team_id)
             data.append(context)
             # print(context)
-        return JsonResponse(Msg().Success(date=data,count=count), safe=False)
+        return JsonResponse(Msg().Success(date=data, count=count), safe=False)
 
     # 对比球队数据
     def Team_contrast(self):

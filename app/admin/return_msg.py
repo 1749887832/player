@@ -38,3 +38,15 @@ class Msg:
             return 0
         else:
             return round((left / (left + right)) * 100, 2)
+
+    def Judge(self, one_score, two_score, one_id, two_id, you_id):
+        if one_score >= two_score:
+            if one_id == you_id:
+                return "胜利"
+            else:
+                return "失败"
+        else:
+            if two_id == you_id:
+                return "胜利"
+            else:
+                return "失败"
