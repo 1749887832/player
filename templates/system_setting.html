@@ -294,7 +294,7 @@
                                 layer.msg('移除成功')
                             },
                             error: function (error) {
-                                tips(JSON.stringify(error['msg']))
+                                layer.msg(error['msg'])
                             }
                         })
                     },

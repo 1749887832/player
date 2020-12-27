@@ -338,8 +338,8 @@ class Record:
                     Player_season.objects.filter(schedule_id=schedule_id, team_id=team_right,
                                                  season_id=season_id).aggregate(Sum(key))[key + '__sum']))), 2)
                 if key in ['hit_shoot', 'hit_throw', 'hit_points']:
-                    left_count = Msg().Count_pro(left_sum, left_data[-1]['value'])
-                    right_count = Msg().Count_pro(right_sum, right_data[-1]['value'])
+                    left_count = round(left_sum / left_data[-1]['value'] * 100, 2)
+                    right_count = round(right_sum / right_data[-1]['value'] * 100, 2)
                     data_left['value'] = str(left_count) + '%'
                     data_right['value'] = str(right_count) + '%'
                     data_left['percent'] = str(Msg().Count_pro(left_count, right_count)) + '%'

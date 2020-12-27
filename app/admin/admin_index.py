@@ -34,11 +34,11 @@ class Index(View):
                     i.home = '主'
                 else:
                     i.home = '客'
-            teamset = TeamSet.objects.get(team_id=team_id).nowseason
+            teamset = TeamSet.objects.filter(team_id=team_id)
             if len(teamset) == 0:
                 all_schedule = Schedule.objects.filter(Q(team_one=team_id) | Q(team_two=team_id))
             else:
-                all_schedule = Schedule.objects.filter(Q(team_one=team_id) | Q(team_two=team_id), season_id=teamset)
+                all_schedule = Schedule.objects.filter(Q(team_one=team_id) | Q(team_two=team_id), season_id=teamset[0].nowseason)
             all_count = len(all_schedule)
             count = 0
             for i in all_schedule:
