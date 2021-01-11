@@ -25,6 +25,7 @@ import app.admin.admin_tactics as Ta
 import app.admin.admin_command as Com
 import app.admin.admin_finance as Fina
 import app.admin.admin_setting as Set
+import app.admin.ceshi as ce
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -148,4 +149,6 @@ urlpatterns = [
     path('player/set_nowseaon/', Set.Setting.Set_nowseason),
     # 修改首发球员
     path('player/update_setplayers/', Set.Setting.Update_setplayers),
+    # 测试接口
+    path('ceshi/', ce.Ce.Ceshi)
 ]
