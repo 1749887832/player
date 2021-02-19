@@ -45,7 +45,7 @@ class Finance:
                     if j != int(year) - 1:
                         context['year' + str(j)] = round(int(money) / year, 2)
                     else:
-                        context['year' + str(j)] = int(money) - round(int(money) / year, 2) * (int(year - 1))
+                        context['year' + str(j)] = round(int(money) - round(int(money) / year, 2) * (int(year - 1)), 2)
 
                 context['time'] = SignUp.objects.get(user_id=i.user.id).create_time.strftime('%Y-%m-%d')
                 context['type'] = SignUp.objects.get(user_id=i.user.id).type
@@ -83,11 +83,11 @@ class Finance:
                         # print(count_money)
                 context['player_money'] = count_money
                 if count_money > int(money):
-                    context['exceed_money'] = count_money-int(money)
-                    context['real_money'] = count_money + context['exceed_money']*2
+                    context['exceed_money'] = count_money - int(money)
+                    context['real_money'] = round(count_money + context['exceed_money'] * 2, 2)
                 else:
                     context['exceed_money'] = 0.0
-                    context['real_money'] = count_money
+                    context['real_money'] = round(count_money, 2)
                 date.append(context)
             return JsonResponse(Msg().Success(date=date), safe=False)
         except Exception as e:
